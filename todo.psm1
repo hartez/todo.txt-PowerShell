@@ -44,6 +44,8 @@ param()
 	
 	$cmd = $args[0]
 	
+	Write-Host ""
+	
 	if(!$cmd -or $cmd -eq "list" -or $cmd -eq "ls")
     {
 		$todoArgs = @{path=$todoLocation; search=$args[1..$args.Length]}
@@ -72,15 +74,11 @@ param()
 	}
 	elseif($cmd -eq "listproj" -or $cmd -eq "lsprj" )
 	{
-		Write-Host ""
 		Get-Project | % {Write-Host $_}
-		Write-Host ""
 	}
 	elseif($cmd -eq "listcon" -or $cmd -eq "lsc" )
 	{
-		Write-Host ""
 		Get-Context | % {Write-Host $_}
-		Write-Host ""
 	}
 	elseif($cmd -eq "listpri" -or $cmd -eq "lsp")
 	{
@@ -98,6 +96,8 @@ param()
 	{
 		Append-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
+	
+	Write-Host ""
 }
 
 function ParseToDoList {
