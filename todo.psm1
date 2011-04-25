@@ -130,16 +130,19 @@ param(
 
 function Get-ToDo {
 param(
-		[string] $path = $todoLocation,
 		[string[]] $search,
-		[boolean] $includeCompletedTasks = $FALSE
+		[boolean] $includeCompletedTasks = $FALSE,
+		[string] $path = $todoLocation
 	)
 	
 	## TODO Error/warning message for no todo location set
 	
 	$list = ParseToDoList $path $includeCompletedTasks
-		
-	$search = [String]::Join(" ", $search).Trim() 
+	
+	if($search)
+	{
+		$search = [String]::Join(" ", $search).Trim() 
+	}
 	
 	if(!$search)
 	{
