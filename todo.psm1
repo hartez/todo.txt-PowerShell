@@ -30,18 +30,13 @@ function LoadConfiguration() {
 #>
 function ToDo {
 param()
-
-	##TODO Load up configuration - make them script level variables
-
-	## Assume the user has defined a config file location
+	
 	if(!$configLocation)
 	{
 		$configLocation = ($PSScriptRoot + '\todo_cfg.ps1')
 	}
 	
 	LoadConfiguration $configLocation
-	
-	
 	
 	## TODO process command line options for overrides
 	
@@ -77,11 +72,15 @@ param()
 	}
 	elseif($cmd -eq "listproj" -or $cmd -eq "lsprj" )
 	{
-		Get-Project
+		Write-Host ""
+		Get-Project | % {Write-Host $_}
+		Write-Host ""
 	}
 	elseif($cmd -eq "listcon" -or $cmd -eq "lsc" )
 	{
-		Get-Context
+		Write-Host ""
+		Get-Context | % {Write-Host $_}
+		Write-Host ""
 	}
 	elseif($cmd -eq "listpri" -or $cmd -eq "lsp")
 	{
@@ -165,7 +164,6 @@ param(
 	
 	Add-Content $todoLocation ($now + " " + $item)
 	
-	## TODO - check verbose flag
 	if($TODOTXT_VERBOSE)
 	{
 		$taskNum = (Get-Content $todoLocation | Measure-Object).Count
@@ -175,13 +173,13 @@ param(
 }
 
 function Get-Context {
-	$matches = (select-string todo.txt -pattern '\s(@\w+)' -AllMatches) | % {$_.Matches}
-	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique 
+	$matches = (select-string $todoLocation -pattern '\s(@\w+)' -AllMatches) | % {$_.Matches}
+	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique
 }
 
 function Get-Project {
-	$matches = (select-string todo.txt -pattern '\s(\+\w+)' -AllMatches) | % {$_.Matches}
-	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique | % {Write-Host $_}
+	$matches = (select-string $todoLocation -pattern '\s(\+\w+)' -AllMatches) | % {$_.Matches}
+	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique 
 }
 
 function Get-Priority {
