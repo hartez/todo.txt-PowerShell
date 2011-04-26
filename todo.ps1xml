@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Configuration> 
+	<ViewDefinitions>
+		<View>
+		  <Name>todo</Name>
+		  <ViewSelectedBy>
+			<TypeName>ToDo</TypeName>
+		  </ViewSelectedBy>
+		  <TableControl>
+			<TableHeaders>
+			  <TableColumnHeader>
+				<Label>Item</Label>
+				<Width>4</Width>
+			  </TableColumnHeader>
+			  <TableColumnHeader>
+				<Width>8</Width>
+			  </TableColumnHeader>
+			  <TableColumnHeader>
+				<Width>60</Width>
+			  </TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+			  <TableRowEntry>
+				<TableColumnItems>
+				  <TableColumnItem>
+				   <PropertyName>ItemNumber</PropertyName>
+				  </TableColumnItem>
+				  <TableColumnItem>
+					<PropertyName>Priority</PropertyName>
+				  </TableColumnItem>
+				  <TableColumnItem>
+					<PropertyName>Text</PropertyName>
+				  </TableColumnItem>
+				</TableColumnItems>
+			  </TableRowEntry>
+			</TableRowEntries>
+		  </TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>
+

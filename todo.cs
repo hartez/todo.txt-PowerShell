@@ -11,6 +11,24 @@ public class ToDo
 	public String Text;
 	public List<String> Contexts = new List<String>();
 	public List<String> Projects = new List<String>();
+	private bool _done = false;
+	
+	public bool Done
+	{
+		get{return _done;}
+	}
+	
+	public void MarkDone()
+	{
+		_done = true;
+		
+		if(IsPriority)
+		{
+			Priority = String.Empty;
+		}
+		
+		Date = DateTime.Now;
+	}
 	
 	public ToDo(String todo, int itemNumber)
 	{
@@ -36,7 +54,7 @@ public class ToDo
 		
 		todo = todo.Trim();
 		
-		Match everythingElse = Regex.Match(todo, @"(^\((?<priority>[A-Z])\) )?(?:(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}) )?(?<todo>.+)$");
+		Match everythingElse = Regex.Match(todo, @"(?:(?<done>[x]) )?(?:\((?<priority>[A-Z])\) )?(?:(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}) )?(?<todo>.+)$");
 		
 		if(everythingElse != Match.Empty)
 		{
@@ -54,6 +72,11 @@ public class ToDo
 			{
 				Text = everythingElse.Groups["todo"].Value;
 			}
+			
+			if(everythingElse.Groups["done"].Success)
+			{
+				_done = true;
+			}
 		}
 	}
 	
@@ -69,7 +92,9 @@ public class ToDo
 	
 	public override String ToString()
 	{
-		return (!String.IsNullOrEmpty(Priority) ? "(" + Priority + ") " : String.Empty)
+		return 
+			(_done ? "x " : String.Empty)
+			+ (!String.IsNullOrEmpty(Priority) ? "(" + Priority + ") " : String.Empty)
 			+ (Date.HasValue ? Date.Value.ToString("yyyy-MM-dd") : String.Empty)
 			+ " " + Text 
 			+ (Projects.Count() > 0 ? " " : String.Empty)
@@ -128,6 +153,18 @@ public class ToDoList : List<ToDo>
 				where todo.IsPriority
 				orderby todo.Priority
 				select todo, Count);
+		}
+	}
+	
+	public void SetItemPriority(int item, string priority)
+	{
+		ToDo target = (from todo in this
+						where todo.ItemNumber == item
+						select todo).FirstOrDefault();
+						
+		if(target != null)
+		{
+			target.Priority = priority;
 		}
 	}
 	

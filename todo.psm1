@@ -96,6 +96,10 @@ param()
 	{
 		Append-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
+	elseif($cmd -eq "do")
+	{
+		Set-ToDoDone $args[1..$args.Length]
+	}
 	
 	Write-Host ""
 }
@@ -126,6 +130,71 @@ param(
 	}
 	
 	return ,$todos
+}
+
+function Set-ToDoDone {
+	param([int[]] $items)
+	
+	if($items)
+	{
+		$list = ParseToDoList
+		
+		$items | % {
+			if($_ -le $list.Count)
+			{
+				if($list[$_ - 1].Done)
+				{
+					Write-Host "$_ is already marked done."
+				}
+				else
+				{
+					$list[$_ - 1].MarkDone()
+					
+					if($TODOTXT_VERBOSE)
+					{
+						Write-Host ("$_ " + $list[$_ - 1].Text)
+						Write-Host "TODO: $_ marked as done."
+					}
+				}
+			}
+			else
+			{
+				Write-Host "No task $_."
+			}
+		}
+		
+		Set-Content $todoLocation $list.ToOutput()
+	}
+}
+
+function Set-ToDoPriority {
+	param([int] $item,
+		[string] $priority)
+
+	if($priority -match "^[A-Z]{1}$")
+	{
+		$list = ParseToDoList
+		
+		if($item -le $list.Count)
+		{
+			$currentPriority = $list.GetPriority($priority)
+			
+			if($currentPriority.Count -gt 0)
+			{
+				##TODO error - already an item with this priority
+			}
+			else
+			{
+				$list.SetItemPriority($item, $priority)
+				Set-Content $todoLocation $list.ToOutput()
+				#TODO check verbosity, output accordingly
+			}
+		}
+		
+		## TODO no such item message
+	}
+	
+	## TODO show an error message
 }
 
 function Get-ToDo {
@@ -353,5 +422,7 @@ export-modulemember -function Get-Priority
 export-modulemember -function Append-ToDo
 export-modulemember -function Prepend-ToDo
 export-modulemember -function Replace-ToDo
+export-modulemember -function Set-ToDoDone
+export-modulemember -function Set-ToDoPriority
 export-modulemember -function ToDo
 export-modulemember -function ParseToDoList
