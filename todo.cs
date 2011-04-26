@@ -11,16 +11,16 @@ public class ToDo
 	public String Text;
 	public List<String> Contexts = new List<String>();
 	public List<String> Projects = new List<String>();
-	private bool _done = false;
+	private bool _completed = false;
 	
-	public bool Done
+	public bool Completed
 	{
-		get{return _done;}
+		get{return _completed;}
 	}
 	
-	public void MarkDone()
+	public void MarkCompleted()
 	{
-		_done = true;
+		_completed = true;
 		
 		if(IsPriority)
 		{
@@ -28,6 +28,15 @@ public class ToDo
 		}
 		
 		Date = DateTime.Now;
+	}
+	
+	public void Empty()
+	{
+		Text = String.Empty;
+		Date = null;
+		Priority = String.Empty;
+		Contexts = new List<String>();
+		Projects = new List<String>();
 	}
 	
 	public ToDo(String todo, int itemNumber)
@@ -75,7 +84,7 @@ public class ToDo
 			
 			if(everythingElse.Groups["done"].Success)
 			{
-				_done = true;
+				_completed = true;
 			}
 		}
 	}
@@ -93,7 +102,7 @@ public class ToDo
 	public override String ToString()
 	{
 		return 
-			(_done ? "x " : String.Empty)
+			(_completed ? "x " : String.Empty)
 			+ (!String.IsNullOrEmpty(Priority) ? "(" + Priority + ") " : String.Empty)
 			+ (Date.HasValue ? Date.Value.ToString("yyyy-MM-dd") : String.Empty)
 			+ " " + Text 
@@ -130,6 +139,13 @@ public class ToDoList : List<ToDo>
 		}
 	
 		return this.Select(x => x.ToString(_numberFormat));
+	}
+	
+	public ToDoList ListCompleted()
+	{
+		return new ToDoList(from todo in this
+				where todo.Completed
+				select todo, Count);
 	}
 	
 	public ToDoList Search(String term)
@@ -228,6 +244,28 @@ public class ToDoList : List<ToDo>
 		return ReplaceItemText(item, term, String.Empty);
 	}
 	
+	public ToDoList RemoveCompletedItems(bool preserveLineNumbers)
+	{
+		ToDoList completed = ListCompleted();
+		
+		for(int n = this.Count - 1; n >= 0; n--)
+		{
+			if(this[n].Completed)
+			{
+				if(preserveLineNumbers)
+				{
+					this[n].Empty();
+				}
+				else
+				{
+					Remove(this[n]);
+				}
+			}
+		}
+		
+		return completed;
+	}
+	
 	public void RemoveItem(int item, bool preserveLineNumbers)
 	{
 		ToDo target = (from todo in this
@@ -238,16 +276,18 @@ public class ToDoList : List<ToDo>
 		{			
 			if(preserveLineNumbers)
 			{
-				target.Text = String.Empty;
-				target.Date = null;
-				target.Priority = String.Empty;
-				target.Contexts = new List<String>();
-				target.Projects = new List<String>();
+				target.Empty();
 			}
 			else
 			{
 				this.Remove(target);
-				// TODO Renumber
+				
+				int itemNumber = 1;
+				foreach(ToDo todo in this)
+				{
+					todo.ItemNumber = itemNumber;
+					itemNumber += 1;
+				}
 			}
 		}
 	}

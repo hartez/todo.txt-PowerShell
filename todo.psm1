@@ -9,6 +9,8 @@ function LoadConfiguration() {
 	## Set up the defaults
 	$script:TODOTXT_VERBOSE = $FALSE
 	$script:TODOTXT_FORCE = $FALSE
+	$script:TODOTXT_AUTO_ARCHIVE = $FALSE
+	$script:TODOTXT_PRESERVE_LINE_NUMBERS = $FALSE
 	
 	## Override the defaults with the configuration file
 	if(Test-Path $path)
@@ -48,13 +50,13 @@ param()
 	
 	if(!$cmd -or $cmd -eq "list" -or $cmd -eq "ls")
     {
-		$todoArgs = @{path=$todoLocation; search=$args[1..$args.Length]}
+		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]}
 		
 		(Get-ToDo @todoArgs).ToNumberedOutput();
     }
 	elseif($cmd -eq "listall" -or $cmd -eq "lsa")
     {
-		$todoArgs = @{path=$todoLocation; search=$args[1..$args.Length]; includeCompletedTasks=$TRUE}
+		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]; includeCompletedTasks=$TRUE}
 		
 		(Get-ToDo @todoArgs).ToNumberedOutput();
     }
@@ -98,7 +100,11 @@ param()
 	}
 	elseif($cmd -eq "do")
 	{
-		Set-ToDoDone $args[1..$args.Length]
+		Set-ToDoComplete $args[1..$args.Length]
+	}
+	elseif($cmd -eq "archive")
+	{
+		Archive-ToDo
 	}
 	
 	Write-Host ""
@@ -106,13 +112,13 @@ param()
 
 function ParseToDoList {
 param(
-		[string] $path = $todoLocation,
+		[string] $path = $TODO_FILE,
 		[boolean] $includeCompletedTasks = $FALSE
 	)
 	
-	if($includeCompletedTasks -and $doneLocation -and (Test-Path $doneLocation))
+	if($includeCompletedTasks -and $DONE_FILE -and (Test-Path $DONE_FILE))
 	{
-		$listLocations = @($path, $doneLocation)
+		$listLocations = @($path, $DONE_FILE)
 	}
 	else
 	{
@@ -132,7 +138,7 @@ param(
 	return ,$todos
 }
 
-function Set-ToDoDone {
+function Set-ToDoComplete {
 	param([int[]] $items)
 	
 	if($items)
@@ -148,7 +154,7 @@ function Set-ToDoDone {
 				}
 				else
 				{
-					$list[$_ - 1].MarkDone()
+					$list[$_ - 1].MarkCompleted()
 					
 					if($TODOTXT_VERBOSE)
 					{
@@ -163,7 +169,31 @@ function Set-ToDoDone {
 			}
 		}
 		
-		Set-Content $todoLocation $list.ToOutput()
+		Set-Content $TODO_FILE $list.ToOutput()
+		
+		if($TODOTXT_AUTO_ARCHIVE)
+		{
+			Archive-ToDo
+		}
+	}
+}
+
+function Archive-ToDo {
+
+	## Todo figure out what to do if $DONE_FILE isn't specified
+	if($DONE_FILE)
+	{
+		$list = ParseToDoList
+		$completed = $list.RemoveCompletedItems($TODOTXT_PRESERVE_LINE_NUMBERS)
+		
+		Add-Content $DONE_FILE $completed.ToOutput()
+		Set-Content $TODO_FILE $list.ToOutput();
+		
+		if($TODOTXT_VERBOSE)
+		{
+			$completed.ToNumberedOutput() | % {Write-Host $_}
+			Write-Host "TODO: $TODO_FILE archived."
+		}
 	}
 }
 
@@ -186,7 +216,7 @@ function Set-ToDoPriority {
 			else
 			{
 				$list.SetItemPriority($item, $priority)
-				Set-Content $todoLocation $list.ToOutput()
+				Set-Content $TODO_FILE $list.ToOutput()
 				#TODO check verbosity, output accordingly
 			}
 		}
@@ -201,7 +231,7 @@ function Get-ToDo {
 param(
 		[string[]] $search,
 		[boolean] $includeCompletedTasks = $FALSE,
-		[string] $path = $todoLocation
+		[string] $path = $TODO_FILE
 	)
 	
 	## TODO Error/warning message for no todo location set
@@ -234,23 +264,23 @@ param(
 	
 	$item = [String]::Join(" ", $item) 
 	
-	Add-Content $todoLocation ($now + " " + $item)
+	Add-Content $TODO_FILE ($now + " " + $item)
 	
 	if($TODOTXT_VERBOSE)
 	{
-		$taskNum = (Get-Content $todoLocation | Measure-Object).Count
+		$taskNum = (Get-Content $TODO_FILE | Measure-Object).Count
 		Write-Host "$taskNum $item"
 		Write-Host "$taskNum added."
 	}
 }
 
 function Get-Context {
-	$matches = (select-string $todoLocation -pattern '\s(@\w+)' -AllMatches) | % {$_.Matches}
+	$matches = (select-string $TODO_FILE -pattern '\s(@\w+)' -AllMatches) | % {$_.Matches}
 	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique
 }
 
 function Get-Project {
-	$matches = (select-string $todoLocation -pattern '\s(\+\w+)' -AllMatches) | % {$_.Matches}
+	$matches = (select-string $TODO_FILE -pattern '\s(\+\w+)' -AllMatches) | % {$_.Matches}
 	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique 
 }
 
@@ -276,7 +306,7 @@ function Prepend-ToDo {
 		if($item -le $list.Count)
 		{
 			$list.PrependToDo($item, $term)
-			Set-Content $todoLocation $list.ToOutput()
+			Set-Content $TODO_FILE $list.ToOutput()
 		
 			if($TODOTXT_VERBOSE)
 			{
@@ -299,7 +329,7 @@ function Append-ToDo {
 		if($item -le $list.Count)
 		{
 			$list.AppendToDo($item, $term)
-			Set-Content $todoLocation $list.ToOutput()
+			Set-Content $TODO_FILE $list.ToOutput()
 			
 			if($TODOTXT_VERBOSE)
 			{
@@ -324,7 +354,7 @@ function Replace-ToDo {
 			$oldText = $list[$item-1].Text
 			
 			$list.ReplaceToDo($item, $term)
-			Set-Content $todoLocation $list.ToOutput()
+			Set-Content $TODO_FILE $list.ToOutput()
 			
 			if($TODOTXT_VERBOSE)
 			{
@@ -351,7 +381,7 @@ param(
 		if($term)
 		{
 			$success =  $list.RemoveFromItem($item, $term)
-			Set-Content $todoLocation $list.ToOutput()
+			Set-Content $TODO_FILE $list.ToOutput()
 			
 			if($success)
 			{
@@ -391,7 +421,7 @@ param(
 			if($confirmed)
 			{
 				$list.RemoveItem($item, $preserveLineNumbers)
-				Set-Content $todoLocation $list.ToOutput()	
+				Set-Content $TODO_FILE $list.ToOutput()	
 				
 				if($TODOTXT_VERBOSE)
 				{
@@ -424,5 +454,6 @@ export-modulemember -function Prepend-ToDo
 export-modulemember -function Replace-ToDo
 export-modulemember -function Set-ToDoDone
 export-modulemember -function Set-ToDoPriority
+export-modulemember -function Archive-ToDo
 export-modulemember -function ToDo
 export-modulemember -function ParseToDoList
