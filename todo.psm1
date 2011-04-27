@@ -20,15 +20,50 @@ function LoadConfiguration() {
 }
 
 <# 
- .Synopsis
-  TODO Update
+.Synopsis
+	TODO.TXT Command Line Interface for PowerShell 2.0
 
- .Description
-  TODO Update
+.Description
+	The ToDo function is an entry point for running functions to manipulate a todo.txt file 
+	using the same command syntax as todo.sh
 
- .Example
-   # TODO Update
-   todo 
+.Example
+	ToDo list 
+	
+	List all of the todo items in your todo file. 
+
+.Example
+	ToDo listall 
+	
+	List all of the items in the todo and done files.
+
+.Example
+	ToDo add "THING I NEED TO DO +project @context"
+	
+	Adds "THING I NEED TO DO" to your todo.txt file on its own line, 
+	assigning it to a project and context. 
+
+.Example 
+	ToDo append 34 "TEXT TO APPEND"
+
+	Adds "TEXT TO APPEND" to the end of the task on line 34.
+
+.Example 
+	ToDo archive
+	
+	Moves all done tasks from todo.txt to done.txt.
+	
+.Example 
+
+	ToDo del 34 
+
+	Deletes the task on line 34 in todo.txt.
+
+.Example 
+
+	ToDo del 34 "foo"
+	
+	Deletes the text "foo" from line 34 in todo.txt
 #>
 function ToDo {
 param()
