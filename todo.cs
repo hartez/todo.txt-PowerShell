@@ -39,19 +39,10 @@ public class ToDo
 		Projects = new List<String>();
 	}
 	
-	public ToDo(String todo, int itemNumber)
+	private String ParseProjects(String todo)
 	{
-		ItemNumber = itemNumber;
-		
-		MatchCollection contexts = Regex.Matches(todo, @"\s(@\w+)");
-		
-		foreach(Match match in contexts)
-		{
-			String context = match.Groups[1].Captures[0].Value;
-			Contexts.Add(context);
-			todo = todo.Replace(context, String.Empty);
-		}
-		
+		Projects.Clear();
+	
 		MatchCollection projects = Regex.Matches(todo, @"\s(\+\w+)");
 		
 		foreach(Match match in projects)
@@ -61,8 +52,27 @@ public class ToDo
 			todo = todo.Replace(project, String.Empty);
 		}
 		
-		todo = todo.Trim();
+		return todo;
+	}
+	
+	private String ParseContexts(String todo)
+	{
+		Contexts.Clear();
+	
+		MatchCollection contexts = Regex.Matches(todo, @"\s(@\w+)");
 		
+		foreach(Match match in contexts)
+		{
+			String context = match.Groups[1].Captures[0].Value;
+			Contexts.Add(context);
+			todo = todo.Replace(context, String.Empty);
+		}
+		
+		return todo;
+	}
+	
+	private void ParseEverythingElse(String todo)
+	{
 		Match everythingElse = Regex.Match(todo, @"(?:(?<done>[x]) )?(?:\((?<priority>[A-Z])\) )?(?:(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}) )?(?<todo>.+)$");
 		
 		if(everythingElse != Match.Empty)
@@ -89,9 +99,67 @@ public class ToDo
 		}
 	}
 	
+	public ToDo(String todo, int itemNumber)
+	{
+		ItemNumber = itemNumber;
+		
+		ParseFields(todo);
+	}
+	
+	private void ParseFields(String todo)
+	{
+		todo = ParseContexts(todo);
+		todo = ParseProjects(todo);
+		
+		todo = todo.Trim();
+		
+		ParseEverythingElse(todo);
+	}
+	
+	public void Replace(String newTodo)
+	{
+		ParseFields(newTodo);
+	}
+	
+	public void Append(String toAppend)
+	{
+		ParseFields(ToDoProjectContext + toAppend);
+	}
+
+	public void Prepend(String toPrepend)
+	{
+		ParseFields(toPrepend + ToDoProjectContext);
+	}
+	
+	public bool ReplaceItemText(string oldText, string newText)
+	{
+		String replaceableText = ToDoProjectContext;
+	
+		if(replaceableText.Contains(oldText))
+		{
+			replaceableText = replaceableText.Replace(oldText, newText);
+			ParseFields(replaceableText);
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public bool IsPriority
 	{
 		get{ return !String.IsNullOrEmpty(Priority); }
+	}
+	
+	private String ToDoProjectContext
+	{
+		get
+		{
+			return Text 
+			+ (Projects.Count() > 0 ? " " : String.Empty)
+			+ String.Join(" ", Projects.ToArray()) 
+			+ (Contexts.Count() > 0 ? " " : String.Empty) 
+			+ String.Join(" ", Contexts.ToArray());
+		}
 	}
 	
 	public String ToString(String numberFormat)
@@ -105,11 +173,7 @@ public class ToDo
 			(_completed ? "x " : String.Empty)
 			+ (!String.IsNullOrEmpty(Priority) ? "(" + Priority + ") " : String.Empty)
 			+ (Date.HasValue ? Date.Value.ToString("yyyy-MM-dd") : String.Empty)
-			+ " " + Text 
-			+ (Projects.Count() > 0 ? " " : String.Empty)
-			+ String.Join(" ", Projects.ToArray()) 
-			+ (Contexts.Count() > 0 ? " " : String.Empty) 
-			+ String.Join(" ", Contexts.ToArray());
+			+ " " + ToDoProjectContext;
 	}
 }
 
@@ -192,11 +256,7 @@ public class ToDoList : List<ToDo>
 						
 		if(target != null)
 		{
-			if(target.Text.Contains(oldText))
-			{
-				target.Text = target.Text.Replace(oldText, newText);
-				return true;
-			}
+			return target.ReplaceItemText(oldText, newText);
 		}
 		
 		return false;
@@ -210,8 +270,7 @@ public class ToDoList : List<ToDo>
 						
 		if(target != null)
 		{
-			// TODO Replace, Append, Prepend need to handle contexts and projects, too
-			target.Text = newText;
+			target.Replace(newText);
 		}			
 	}
 	
@@ -223,7 +282,7 @@ public class ToDoList : List<ToDo>
 						
 		if(target != null)
 		{
-			target.Text = target.Text + newText;
+			target.Append(newText);
 		}			
 	}
 	
@@ -235,7 +294,7 @@ public class ToDoList : List<ToDo>
 						
 		if(target != null)
 		{
-			target.Text = newText + target.Text;
+			target.Prepend(newText);
 		}			
 	}
 	

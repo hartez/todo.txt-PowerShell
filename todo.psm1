@@ -106,6 +106,10 @@ param()
 	{
 		Archive-ToDo
 	}
+	elseif($cmd -eq "pri" -or $cmd -eq "p")
+	{
+		Set-ToDoPriority $args[1] $args[2]
+	}
 	
 	Write-Host ""
 }
@@ -211,20 +215,26 @@ function Set-ToDoPriority {
 			
 			if($currentPriority.Count -gt 0)
 			{
-				##TODO error - already an item with this priority
+				Write-Host "There is already an item with this priority"
 			}
 			else
 			{
 				$list.SetItemPriority($item, $priority)
 				Set-Content $TODO_FILE $list.ToOutput()
-				#TODO check verbosity, output accordingly
+				if($TODOTXT_VERBOSE)
+				{
+					  Write-Host ("$item " + $list[$item - 1].Text)
+						Write-Host "TODO: $item prioritized ($priority)."
+				}
 			}
 		}
-		
-		## TODO no such item message
+		else
+		{
+			Write-Host "No task $_."
+		}
 	}
 	
-	## TODO show an error message
+	## TODO show usage
 }
 
 function Get-ToDo {
