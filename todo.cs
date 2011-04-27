@@ -214,8 +214,16 @@ public class ToDoList : List<ToDo>
 	
 	public ToDoList Search(String term)
 	{
+		bool include = true;
+		
+		if(term.StartsWith("-"))
+		{
+			include = false;
+			term = term.Substring(1);
+		}
+			
 		return new ToDoList(from todo in this
-				where todo.ToString().Contains(term)
+				where !(include ^ todo.ToString().Contains(term))
 				select todo, Count);
 	}	
 	
