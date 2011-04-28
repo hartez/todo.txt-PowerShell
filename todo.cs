@@ -172,8 +172,8 @@ public class ToDo
 		return 
 			(_completed ? "x " : String.Empty)
 			+ (!String.IsNullOrEmpty(Priority) ? "(" + Priority + ") " : String.Empty)
-			+ (Date.HasValue ? Date.Value.ToString("yyyy-MM-dd") : String.Empty)
-			+ " " + ToDoProjectContext;
+			+ (Date.HasValue ? (Date.Value.ToString("yyyy-MM-dd") + " ") : String.Empty)
+			+ ToDoProjectContext;
 	}
 }
 

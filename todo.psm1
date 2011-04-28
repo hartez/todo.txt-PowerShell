@@ -11,6 +11,7 @@ function LoadConfiguration() {
 	$script:TODOTXT_FORCE = $FALSE
 	$script:TODOTXT_AUTO_ARCHIVE = $FALSE
 	$script:TODOTXT_PRESERVE_LINE_NUMBERS = $FALSE
+	$script:TODOTXT_DATE_ON_ADD = $TRUE
 	
 	## Override the defaults with the configuration file
 	if(Test-Path $path)
@@ -304,12 +305,14 @@ param(
 	[string[]] $item
 	)
 	
-	## TODO - check configuration for whether to prepend the add date
-	$now = (Get-Date -format "yyyy-MM-dd")	
+	$item = ([String]::Join(" ", $item)).Trim()
 	
-	$item = [String]::Join(" ", $item) 
+	if($TODOTXT_DATE_ON_ADD)
+	{
+		$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
+	}
 	
-	Add-Content $TODO_FILE ($now + " " + $item)
+	Add-Content $TODO_FILE ($item)
 	
 	if($TODOTXT_VERBOSE)
 	{

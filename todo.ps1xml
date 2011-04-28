@@ -13,11 +13,15 @@
 				<Label>Item</Label>
 				<Width>4</Width>
 			  </TableColumnHeader>
+			   <TableColumnHeader>
+			   <Label>Done</Label>
+				<Width>5</Width>
+			  </TableColumnHeader>
 			  <TableColumnHeader>
 				<Width>8</Width>
 			  </TableColumnHeader>
 			  <TableColumnHeader>
-				<Width>60</Width>
+				<Width>80</Width>
 			  </TableColumnHeader>
 			</TableHeaders>
 			<TableRowEntries>
@@ -25,6 +29,9 @@
 				<TableColumnItems>
 				  <TableColumnItem>
 				   <PropertyName>ItemNumber</PropertyName>
+				  </TableColumnItem>
+				  <TableColumnItem>
+				   <PropertyName>Completed</PropertyName>
 				  </TableColumnItem>
 				  <TableColumnItem>
 					<PropertyName>Priority</PropertyName>
