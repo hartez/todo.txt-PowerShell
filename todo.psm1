@@ -146,6 +146,10 @@ param()
 	{
 		Set-ToDoPriority $args[1] $args[2]
 	}
+	elseif($cmd -eq "help")
+	{
+		Get-Help Todo
+	}
 	
 	Write-Host ""
 }
