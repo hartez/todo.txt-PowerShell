@@ -121,7 +121,7 @@ param()
 	elseif($cmd -eq "listpri" -or $cmd -eq "lsp")
 	{
 		(Get-Priority $args[1]).ToNumberedOutput()
-	}
+	}	
 	elseif($cmd -eq "replace")
 	{
 		Replace-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
@@ -145,6 +145,10 @@ param()
 	elseif($cmd -eq "pri" -or $cmd -eq "p")
 	{
 		Set-ToDoPriority $args[1] $args[2]
+	}
+	elseif($cmd -eq "depri" -or $cmd -eq "dp")
+	{
+		Deprioritize-ToDo $args[1..$args.Length]
 	}
 	elseif($cmd -eq "help")
 	{
@@ -241,6 +245,30 @@ function Archive-ToDo {
 	}
 }
 
+function Deprioritize-ToDo {
+	param([int[]] $items)
+	
+	$list = ParseToDoList
+	
+	$items | % {
+		if($_ -le $list.Count)
+		{
+			$list.SetItemPriority($_, '')
+			if($TODOTXT_VERBOSE)
+			{
+				Write-Host ("$_ " + $list[$_ - 1].Text)
+				Write-Host "TODO: $_ deprioritized."
+			}
+		}
+		else
+		{
+			Write-Host "No task $_."
+		}
+	}
+	
+	Set-Content $TODO_FILE $list.ToOutput()
+}
+
 function Set-ToDoPriority {
 	param([int] $item,
 		[string] $priority)
@@ -263,14 +291,14 @@ function Set-ToDoPriority {
 				Set-Content $TODO_FILE $list.ToOutput()
 				if($TODOTXT_VERBOSE)
 				{
-					  Write-Host ("$item " + $list[$item - 1].Text)
-						Write-Host "TODO: $item prioritized ($priority)."
+					Write-Host ("$item " + $list[$item - 1].Text)
+					Write-Host "TODO: $item prioritized ($priority)."
 				}
 			}
 		}
 		else
 		{
-			Write-Host "No task $_."
+			Write-Host "No task $item."
 		}
 	}
 	
@@ -507,5 +535,7 @@ export-modulemember -function Replace-ToDo
 export-modulemember -function Set-ToDoDone
 export-modulemember -function Set-ToDoPriority
 export-modulemember -function Archive-ToDo
+export-modulemember -function Set-ToDoComplete
+export-modulemember -function Deprioritize-ToDo
 export-modulemember -function ToDo
 export-modulemember -function ParseToDoList
