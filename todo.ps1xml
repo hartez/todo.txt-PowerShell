@@ -18,10 +18,20 @@
 				<Width>5</Width>
 			  </TableColumnHeader>
 			  <TableColumnHeader>
-				<Width>8</Width>
+				<Label>Pri</Label>
+				<Alignment>center</Alignment>
+				<Width>3</Width>
 			  </TableColumnHeader>
 			  <TableColumnHeader>
-				<Width>80</Width>
+				<Width>60</Width>
+			  </TableColumnHeader>
+			   <TableColumnHeader>
+				<Width>20</Width>
+				<Label>Contexts</Label>
+			  </TableColumnHeader>
+			  <TableColumnHeader>
+				<Width>20</Width>
+				<Label>Projects</Label>
 			  </TableColumnHeader>
 			</TableHeaders>
 			<TableRowEntries>
@@ -38,6 +48,12 @@
 				  </TableColumnItem>
 				  <TableColumnItem>
 					<PropertyName>Text</PropertyName>
+				  </TableColumnItem>
+				   <TableColumnItem>
+					<ScriptBlock>[string]::join(",", $_.Contexts.ToArray())</ScriptBlock>
+				  </TableColumnItem>
+				  <TableColumnItem>
+					<ScriptBlock>[string]::join(",", $_.Projects.ToArray())</ScriptBlock>
 				  </TableColumnItem>
 				</TableColumnItems>
 			  </TableRowEntry>
