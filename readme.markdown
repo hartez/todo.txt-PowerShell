@@ -19,7 +19,7 @@ Requirements
 Installation
 ------------
 
-Simply copy all of the files to a folder called 'todo' in your PowerShell modules folder (usually 'C:\Users\username\Documents\WindowsPowerShell\Modules').
+Simply copy all of the files to a folder called 'todo' in your PowerShell modules folder (usually 'C:\\Users\\username\\Documents\\WindowsPowerShell\\Modules').
 You can manually import the module using 'import-module todo', or you can add it your PowerShell profile so it's always available when you start PowerShell. Just add the following line to your profile.ps1 file:
 
     Import-Module todo
