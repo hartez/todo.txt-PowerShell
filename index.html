@@ -1,5 +1,3 @@
----
----
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +8,7 @@
   <style type="text/css">
     body {
       margin-top: 1.0em;
-      background-color: #d47e82;
+      background-color: #E6CE9C;
       font-family: Helvetica, Arial, FreeSans, san-serif;
       color: #000000;
     }
@@ -51,53 +49,67 @@
       Implementation of todo.txt CLI for PowerShell
     </div>
 
-    <p>A simple PowerShell module for managing your todo.txt file.
+	
+    <p>A simple PowerShell module for managing your todo.txt file.</p>
 
-The goal of this project is to provide a version of the todo.txt CLI for Windows PowerShell. Sub-goals include:
-
-    Providing full compatibility between todo.txt files managed this project and by the original todo.txt CLI and the Android and iOS versions. Users should be able to move seamlessly between either version.
-    Providing (as closely as possible) the same command interface so that users of both versions can switch back and forth easily.
-    Allowing PowerShell users to take advantage of PowerShell's affinity for .NET objects.
+<p>
+This project was inspired by <a href="http://todotxt.com/">Gina Trapani's Todo.txt task management system</a>.
 </p>
+	
+<p>The goal of this project is to provide a version of the todo.txt command line interface for Windows PowerShell. Sub-goals include:</p>
+
+<ol>
+
+<li>Providing full compatibility between todo.txt files managed this project and by the <a href="https://github.com/ginatrapani/todo.txt-cli">original todo.txt CLI</a> and the Android and iOS versions. Users should be able to move seamlessly between either version.</li>
+<li>Providing (as closely as possible) the same command interface so that users of both versions can switch back and forth easily. </li>
+<li>Allowing PowerShell users to take advantage of PowerShell's affinity for .NET objects.</li>
+</ol>
+
+
 <h2>Dependencies</h2>
-*PowerShell 2.0
-*.NET 3.5
-<h2>Install</h2>
-<p>Simply copy all of the files to a folder called 'todo' in your PowerShell modules folder (usually 'C:UsersusernameDocumentsWindowsPowerShellModules' in your 'Documents' folder. You can manually import the module using 'import-module todo', or you can add it your PowerShell profile so it's always available when you start PowerShell. Just add the following line to your profile.ps1 file:
+<ul>
+<li>PowerShell 2.0</li>
+<li>.NET Framework 3.5 or higher</li>
+</ul>
+<h2>Installation</h2>
+<p>Simply copy all of the files to a folder called 'todo' in your PowerShell modules folder (usually 'C:Users\username\Documents\WindowsPowerShell\Modules'.
+You can manually import the module using 'import-module todo', or you can add it your PowerShell profile so it's always available when you start PowerShell. Just add the following line to your profile.ps1 file:</p>
 
-Import-Module todo
+<pre><code>Import-Module todo
+</code></pre>
 
-You'll also want to set the location of your todo.txt and done.txt files. If you use Dropbox to keep them synced up, the lines you'll add to profile.ps1 look something like this:
+<p>You'll also want to set the location of your todo.txt and done.txt files. If you use Dropbox to keep them synced up, the lines you'll add to profile.ps1 look something like this:</p>
 
-Set-Variable -name TODO_FILE -value 'C:\Users\username\Dropbox\todo\todo.txt'
+<pre><code>Set-Variable -name TODO_FILE -value 'C:\Users\username\Dropbox\todo\todo.txt'
 Set-Variable -name DONE_FILE -value 'C:\Users\username\Dropbox\todo\done.txt'
+</code></pre>
 
-And you can alias the function 'ToDo' to 't' to save some typing, if you'd like:
+<p>And you can alias the function 'ToDo' to 't' to save some typing, if you'd like:</p>
 
-Set-Alias -name t -value todo
+<pre><code>Set-Alias -name t -value todo
+</code></pre>
 
-Your profile.ps1 file is typically located in C:UsersusernameDocumentsWindowsPowerShell</p>
+<p>Your profile.ps1 file is typically located in C:\Users\username\Documents\WindowsPowerShell</p>
 <h2>License</h2>
-<p>Copyright (c) 2011 E.Z. Hart
+<p>Copyright (c) 2011 E.Z. Hart</p>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+furnished to do so, subject to the following conditions:</p>
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-</p>
+THE SOFTWARE.</p>
 <h2>Authors</h2>
 <p>E.Z. Hart (hartez@gmail.com)<br/><br/>      </p>
 <h2>Contact</h2>
