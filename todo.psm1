@@ -1,5 +1,18 @@
-$classDefinitionPath = ($PSScriptRoot + '\todo.cs')
-Add-Type -TypeDefinition (Get-Content $classDefinitionPath | Out-String) -Language "CSharpVersion3"
+$assemblyPath = ($PSScriptRoot + '\staging\todotxtlib.net.dll')
+$assemblyLoadPath = ($PSScriptRoot + '\lib')
+
+Write-Host $assemblyLoadPath
+
+if(!(Test-Path $assemblyLoadPath))
+{
+	New-Item $assemblyLoadPath -ItemType directory
+}
+
+$assemblyLoadPath = $assemblyLoadPath + '\todotxtlib.net.dll'
+
+Copy-Item -Path $assemblyPath -Destination $assemblyLoadPath
+
+Add-Type -Path $assemblyLoadPath
 
 ## Figure out licensing and copyright stuff (including manifest)
 
@@ -173,13 +186,13 @@ param(
 		$listLocations = @($path)
 	}
 	
-	$todos = New-Object ToDoList
+	$todos = New-Object todotxtlib.net.TaskList
 
 	$results = @(Get-Content $listLocations)
 		
 	for ($i=0; $i -lt $results.Length; $i++)
 	{
-		$todo = New-Object ToDo($results[$i], ($i + 1))
+		$todo = New-Object todotxtlib.net.Task($results[$i], ($i + 1))
 		$todos.Add($todo)
 	}
 	
