@@ -1,0 +1,3 @@
+[submodule "todotxtlib.net"]
+	path = todotxtlib.net
+	url = git@github.com:hartez/todotxtlib.net.git
