@@ -32,9 +32,7 @@ Write-Host $msbuild
 
 Copy-Item -path .\todotxtlib.net\bin\Release\* -destination $path -force
 
-Remove-Item Task.dll
-Remove-Item Task.pdb
-Remove-Item msbuild.log
+Remove-Item "msbuild.log"
 
 Write-Host ""
 Write-Host ""

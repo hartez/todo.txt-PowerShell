@@ -215,7 +215,7 @@ function Set-ToDoComplete {
 				}
 				else
 				{
-					$list[$_ - 1].MarkCompleted()
+					$list[$_ - 1].ToggleCompleted()
 					
 					if($TODOTXT_VERBOSE)
 					{
@@ -245,7 +245,7 @@ function Archive-ToDo {
 	if($DONE_FILE)
 	{
 		$list = ParseToDoList
-		$completed = $list.RemoveCompletedItems($TODOTXT_PRESERVE_LINE_NUMBERS)
+		$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 		
 		Add-Content $DONE_FILE $completed.ToOutput()
 		Set-Content $TODO_FILE $list.ToOutput();
@@ -398,7 +398,7 @@ function Prepend-ToDo {
 	{
 		if($item -le $list.Count)
 		{
-			$list.PrependToDo($item, $term)
+			$list.PrependToTask($item, $term)
 			Set-Content $TODO_FILE $list.ToOutput()
 		
 			if($TODOTXT_VERBOSE)
@@ -421,7 +421,7 @@ function Append-ToDo {
 	{
 		if($item -le $list.Count)
 		{
-			$list.AppendToDo($item, $term)
+			$list.AppendToTask($item, $term)
 			Set-Content $TODO_FILE $list.ToOutput()
 			
 			if($TODOTXT_VERBOSE)
@@ -446,7 +446,7 @@ function Replace-ToDo {
 		{
 			$oldText = $list[$item-1].Text
 			
-			$list.ReplaceToDo($item, $term)
+			$list.ReplaceInTask($item, $term)
 			Set-Content $TODO_FILE $list.ToOutput()
 			
 			if($TODOTXT_VERBOSE)
@@ -473,7 +473,7 @@ param(
 	
 		if($term)
 		{
-			$success =  $list.RemoveFromItem($item, $term)
+			$success =  $list.RemoveFromTask($item, $term)
 			Set-Content $TODO_FILE $list.ToOutput()
 			
 			if($success)
@@ -513,7 +513,7 @@ param(
 
 			if($confirmed)
 			{
-				$list.RemoveItem($item, $preserveLineNumbers)
+				$list.RemoveTask($item, $preserveLineNumbers)
 				Set-Content $TODO_FILE $list.ToOutput()	
 				
 				if($TODOTXT_VERBOSE)
