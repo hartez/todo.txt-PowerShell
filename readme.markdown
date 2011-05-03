@@ -19,7 +19,10 @@ Requirements
 Installation
 ------------
 
-Simply copy all of the files to a folder called 'todo' in your PowerShell modules folder (usually 'C:\\Users\\username\\Documents\\WindowsPowerShell\\Modules').
+Download and extract the files; open up PowerShell in that directory and run the 'deploy.ps1' script. This will build and deploy the module to the appropriate folder (usually 'C:\\Users\\username\\Documents\\WindowsPowerShell\\Modules\\todo', though you can change this by passing in a different path as the first argument to 'deploy.ps1').
+
+After the deployment script runs, you'll need to restart PowerShell. 
+
 You can manually import the module using 'import-module todo', or you can add it your PowerShell profile so it's always available when you start PowerShell. Just add the following line to your profile.ps1 file:
 
     Import-Module todo
