@@ -403,7 +403,7 @@ function Prepend-ToDo {
 		
 			if($TODOTXT_VERBOSE)
 			{
-				Write-Host ("$item " + $list[$item-1].Text)
+				Write-Host ("$item " + $list[$item-1].Body)
 			}
 		}
 	}
@@ -426,7 +426,7 @@ function Append-ToDo {
 			
 			if($TODOTXT_VERBOSE)
 			{
-				Write-Host ("$item " + $list[$item-1].Text)
+				Write-Host ("$item " + $list[$item-1].Body)
 			}
 		}
 	}
@@ -444,7 +444,7 @@ function Replace-ToDo {
 	{
 		if($item -le $list.Count)
 		{
-			$oldText = $list[$item-1].Text
+			$oldText = $list[$item-1].Body
 			
 			$list.ReplaceInTask($item, $term)
 			Set-Content $TODO_FILE $list.ToOutput()
@@ -469,7 +469,7 @@ param(
 	
 	if($item -le $list.Count)
 	{
-		$oldItem = ($list[$item - 1]).Text
+		$oldItem = ($list[$item - 1]).Body
 	
 		if($term)
 		{
@@ -478,7 +478,7 @@ param(
 			
 			if($success)
 			{
-				$newItem = ($list[$item - 1]).Text
+				$newItem = ($list[$item - 1]).Body
 				Write-Host "$item $oldItem"
 				Write-Host "TODO: Removed '$term' from task."
 				Write-Host "$item $newItem"
