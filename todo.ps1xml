@@ -5,7 +5,7 @@
 		<View>
 		  <Name>todo</Name>
 		  <ViewSelectedBy>
-			<TypeName>ToDo</TypeName>
+			<TypeName>todotxtlib.net.Task</TypeName>
 		  </ViewSelectedBy>
 		  <TableControl>
 			<TableHeaders>
@@ -47,7 +47,7 @@
 					<PropertyName>Priority</PropertyName>
 				  </TableColumnItem>
 				  <TableColumnItem>
-					<PropertyName>Text</PropertyName>
+					<PropertyName>Body</PropertyName>
 				  </TableColumnItem>
 				   <TableColumnItem>
 					<ScriptBlock>[string]::join(",", $_.Contexts.ToArray())</ScriptBlock>
