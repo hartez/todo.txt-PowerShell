@@ -199,6 +199,76 @@ param(
 	return ,$todos
 }
 
+function Move-ToDo {
+	param (
+		[int] $item,
+		[string] $dest,
+		[string] $src = $TODO_FILE
+	)
+	
+	if($dest)
+	{
+		if(!(Test-Path $dest))
+		{
+			Set-Content $dest ''
+		}
+	
+		$srcList = ParseToDoList $src
+		$destList = ParseToDoList $dest
+		
+		if($item -le $srcList.Count)
+		{
+			$oldItem = ($srcList[$item - 1]).Body
+			$confirmed = $TRUE
+		
+			if(!$TODOTXT_FORCE)
+			{
+				$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Moves the task."
+				$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Does nothing."
+	
+				$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+				$result = $host.ui.PromptForChoice("Move Item", "Move '$oldItem'?", $options, 1) 
+				
+				if($result -eq 1)
+				{
+					$confirmed = $FALSE
+				}
+			}
+
+			if($confirmed)
+			{
+				$task = New-Object todotxtlib.net.Task(($srcList[$item - 1].Raw), ($destList.Count + 1))
+			
+				## add it to the destination file
+				$destList.Add($task)
+				Set-Content $dest $destList.ToOutput() 
+				
+				## remove it from the original
+				$srcList.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
+				Set-Content $src $srcList.ToOutput() 
+				
+				if($TODOTXT_VERBOSE)
+				{
+					Write-Host "$item $oldItem"
+					Write-Host "TODO: $item moved from '$src' to '$dest'."
+				}
+			}
+			else
+			{
+				if($TODOTXT_VERBOSE)
+				{
+					Write-Host "TODO: No tasks moved."
+				}
+			}
+		}
+		else
+		{
+			Write-Host "No task $item."
+		}
+	}
+}
+
 function Set-ToDoComplete {
 	param([int[]] $items)
 	
@@ -491,9 +561,6 @@ param(
 		}
 		else
 		{
-			## TODO - Check configuration for 'preserve line numbers'
-			$preserveLineNumbers = $FALSE
-			
 			$confirmed = $TRUE
 		
 			if(!$TODOTXT_FORCE)
@@ -513,7 +580,7 @@ param(
 
 			if($confirmed)
 			{
-				$list.RemoveTask($item, $preserveLineNumbers)
+				$list.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
 				Set-Content $TODO_FILE $list.ToOutput()	
 				
 				if($TODOTXT_VERBOSE)
@@ -550,5 +617,6 @@ export-modulemember -function Set-ToDoPriority
 export-modulemember -function Archive-ToDo
 export-modulemember -function Set-ToDoComplete
 export-modulemember -function Deprioritize-ToDo
+export-modulemember -function Move-ToDo
 export-modulemember -function ToDo
 export-modulemember -function ParseToDoList
