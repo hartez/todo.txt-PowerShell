@@ -163,6 +163,17 @@ param()
 	{
 		Deprioritize-ToDo $args[1..$args.Length]
 	}
+	elseif($cmd -eq "move" -or $cmd -eq "mv")
+	{
+		if($args[3])
+		{
+			Move-ToDo $args[1] $args[2] $args[3]
+		}
+		else
+		{
+			Move-ToDo $args[1] $args[2] 
+		}
+	}
 	elseif($cmd -eq "help")
 	{
 		Get-Help Todo
