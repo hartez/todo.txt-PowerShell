@@ -219,7 +219,7 @@ function Set-ToDoComplete {
 					
 					if($TODOTXT_VERBOSE)
 					{
-						Write-Host ("$_ " + $list[$_ - 1].Text)
+						Write-Host ("$_ " + $list[$_ - 1].Body)
 						Write-Host "TODO: $_ marked as done."
 					}
 				}
