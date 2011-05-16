@@ -16,6 +16,11 @@ Requirements
 * PowerShell 2.0
 * .NET Framework 3.5 or higher
 
+Dependencies
+------------
+
+* [TodotxtLib.Net](https://github.com/hartez/todotxtlib.net) 
+
 Installation
 ------------
 
