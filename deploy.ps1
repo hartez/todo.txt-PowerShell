@@ -28,11 +28,11 @@ $msbuild = [Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToDotNetFramew
 
 Write-Host $msbuild
 
-& $msbuild /p:Configuration=Release /p:TargetVersion=v3.5 /fileLogger ".\todotxtlib.net\todotxtlib.net.csproj" 
+& $msbuild /p:Configuration=Release /p:TargetVersion=v3.5 /fileLogger ".\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj" 
 
 Copy-Item -path .\todotxtlib.net\bin\Release\* -destination $path -force
 
-Remove-Item "msbuild.log"
+#Remove-Item "msbuild.log"
 
 Write-Host ""
 Write-Host ""
