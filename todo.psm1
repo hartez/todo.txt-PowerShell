@@ -78,6 +78,12 @@ function LoadConfiguration() {
 	ToDo del 34 "foo"
 	
 	Deletes the text "foo" from line 34 in todo.txt
+	
+.Example 
+
+	ToDo move 34 .\otherfile.txt
+	
+	Moves item 34 to otherfile.txt
 #>
 function ToDo {
 param()
