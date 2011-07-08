@@ -26,6 +26,11 @@ function LoadConfiguration() {
 	$script:TODOTXT_PRESERVE_LINE_NUMBERS = $FALSE
 	$script:TODOTXT_DATE_ON_ADD = $TRUE
 	
+	$script:PRI_A = 'Yellow'
+	$script:PRI_B = 'Green'
+	$script:PRI_C = 'Cyan'
+	$script:PRI_X = 'White'
+	
 	## Override the defaults with the configuration file
 	if(Test-Path $path)
 	{
@@ -107,19 +112,19 @@ param()
     {
 		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]}
 		
-		(Get-ToDo @todoArgs).ToNumberedOutput();
+		Format-Priority((Get-ToDo @todoArgs).ToNumberedOutput())
     }
 	elseif($cmd -eq "listall" -or $cmd -eq "lsa")
     {
 		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]; includeCompletedTasks=$TRUE}
 		
-		(Get-ToDo @todoArgs).ToNumberedOutput();
+		Format-Priority((Get-ToDo @todoArgs).ToNumberedOutput())
     }
 	elseif($cmd -eq "listfile" -or $cmd -eq "lf")
     {
 		$todoArgs = @{path=$args[1]; search=$args[2..$args.Length]}
 	
-		(Get-ToDo @todoArgs).ToNumberedOutput();
+		Format-Priority((Get-ToDo @todoArgs).ToNumberedOutput())
     }
 	elseif($cmd -eq "add" -or $cmd -eq "a")
 	{
@@ -139,7 +144,7 @@ param()
 	}
 	elseif($cmd -eq "listpri" -or $cmd -eq "lsp")
 	{
-		(Get-Priority $args[1]).ToNumberedOutput()
+		Format-Priority((Get-Priority $args[1]).ToNumberedOutput())
 	}	
 	elseif($cmd -eq "replace")
 	{
@@ -423,12 +428,44 @@ param(
 	
 	if(!$search)
 	{
-		return ,$list
+		$result = $list
 	}
 	else
 	{
 		## TODO - check for '-' at the beginning of the search term and handle notMatch
-		return ,($list.Search($search))
+		$result = ($list.Search($search))
+	}
+	
+	return ,$result
+}
+
+function Format-Priority {
+param(
+		[string[]] $tasks
+	)
+	
+	$tasks | % {
+		
+		if($_ -match "\(A\)")
+		{
+			Write-Host $_ -foregroundcolor $PRI_A
+		}
+		elseif($_ -match "\(B\)")
+		{
+			Write-Host $_ -foregroundcolor $PRI_B
+		}
+		elseif($_ -match "\(C\)")
+		{
+			Write-Host $_ -foregroundcolor $PRI_C
+		}
+		elseif($_ -match "\([D-Z]\)")
+		{
+			Write-Host $_ -foregroundcolor $PRI_X
+		}
+		else
+		{
+			Write-Host $_
+		}
 	}
 }
 
@@ -617,8 +654,6 @@ param(
 		Write-Host "TODO: No task $item"
 	}
 }
-
-## TODO Create a table view for TODOS http://msdn.microsoft.com/en-us/library/dd901841%28v=vs.85%29.aspx
 
 export-modulemember -function Get-ToDo
 export-modulemember -function Add-ToDo
