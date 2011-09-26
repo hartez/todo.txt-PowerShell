@@ -1,1 +1,3 @@
 msbuild.log
+target/
+test/
