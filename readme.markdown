@@ -13,7 +13,7 @@ Sub-goals include:
 Requirements
 ------------
 
-* PowerShell 2.0
+* PowerShell 2.04
 * .NET Framework 3.5 or higher
 
 Dependencies

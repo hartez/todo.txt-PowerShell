@@ -130,6 +130,14 @@ param()
 	{
 		Add-Todo $args[1..$args.Length]
 	}
+	elseif($cmd -eq "addm")
+	{
+		$split = $args[$args.Length - 1].Split([environment]::newline, [StringSplitOptions]'RemoveEmptyEntries')
+
+		($split) | % {
+			Add-ToDo $_
+		}
+	}
 	elseif($cmd -eq "rm" -or $cmd -eq "del")
 	{
 		Remove-ToDo $args[1] $args[2]
@@ -475,7 +483,7 @@ param(
 	)
 	
 	$item = ([String]::Join(" ", $item)).Trim()
-	
+
 	if($TODOTXT_DATE_ON_ADD)
 	{
 		$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
