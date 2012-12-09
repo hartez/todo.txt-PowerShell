@@ -30,9 +30,7 @@ Write-Host $msbuild
 
 & $msbuild /p:Configuration=Release /p:TargetVersion=v3.5 /fileLogger ".\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj" 
 
-Copy-Item -path .\todotxtlib.net\todotxtlib.net.3.5\bin\Release\* -destination $path -force
-
-#Remove-Item "msbuild.log"
+Copy-Item -path .\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.dll -destination $path -force
 
 Write-Host ""
 Write-Host ""
