@@ -280,11 +280,11 @@ function Move-ToDo {
 			
 				## add it to the destination file
 				$destList.Add($task)
-				Set-Content $dest $destList.ToOutput() 
+				$destList.ToOutput() | Set-Content $dest 
 				
 				## remove it from the original
 				$srcList.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
-				Set-Content $src $srcList.ToOutput() 
+				$srcList.ToOutput() | Set-Content $src 
 				
 				if($TODOTXT_VERBOSE)
 				{
@@ -338,7 +338,7 @@ function Set-ToDoComplete {
 			}
 		}
 		
-		Set-Content $TODO_FILE $list.ToOutput()
+		$list.ToOutput() | Set-Content $TODO_FILE
 		
 		if($TODOTXT_AUTO_ARCHIVE)
 		{
@@ -355,8 +355,8 @@ function Archive-ToDo {
 		$list = ParseToDoList
 		$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 		
-		Add-Content $DONE_FILE $completed.ToOutput()
-		Set-Content $TODO_FILE $list.ToOutput();
+		$completed.ToOutput() | Add-Content $DONE_FILE 
+		$list.ToOutput() | Set-Content $TODO_FILE 
 		
 		if($TODOTXT_VERBOSE)
 		{
@@ -387,7 +387,7 @@ function Deprioritize-ToDo {
 		}
 	}
 	
-	Set-Content $TODO_FILE $list.ToOutput()
+	$list.ToOutput() | Set-Content $TODO_FILE
 }
 
 function Set-ToDoPriority {
@@ -409,7 +409,7 @@ function Set-ToDoPriority {
 			else
 			{
 				$list.SetItemPriority($item, $priority)
-				Set-Content $TODO_FILE $list.ToOutput()
+				$list.ToOutput() | Set-Content $TODO_FILE
 				if($TODOTXT_VERBOSE)
 				{
 					Write-Host ("$item " + $list[$item - 1].Text)
@@ -539,7 +539,7 @@ function Prepend-ToDo {
 		if($item -le $list.Count)
 		{
 			$list.PrependToTask($item, $term)
-			Set-Content $TODO_FILE $list.ToOutput()
+			$list.ToOutput() | Set-Content $TODO_FILE
 		
 			if($TODOTXT_VERBOSE)
 			{
@@ -562,7 +562,7 @@ function Append-ToDo {
 		if($item -le $list.Count)
 		{
 			$list.AppendToTask($item, $term)
-			Set-Content $TODO_FILE $list.ToOutput()
+			$list.ToOutput() | Set-Content $TODO_FILE
 			
 			if($TODOTXT_VERBOSE)
 			{
@@ -587,7 +587,7 @@ function Replace-ToDo {
 			$oldText = $list[$item-1].Body
 			
 			$list.ReplaceInTask($item, $term)
-			Set-Content $TODO_FILE $list.ToOutput()
+			$list.ToOutput() | Set-Content $TODO_FILE
 			
 			if($TODOTXT_VERBOSE)
 			{
@@ -614,7 +614,7 @@ param(
 		if($term)
 		{
 			$success =  $list.RemoveFromTask($item, $term)
-			Set-Content $TODO_FILE $list.ToOutput()
+			$list.ToOutput() | Set-Content $TODO_FILE
 			
 			if($success)
 			{
@@ -651,7 +651,7 @@ param(
 			if($confirmed)
 			{
 				$list.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
-				Set-Content $TODO_FILE $list.ToOutput()	
+				$list.ToOutput() | Set-Content $TODO_FILE	
 				
 				if($TODOTXT_VERBOSE)
 				{
