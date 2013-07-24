@@ -14,14 +14,14 @@ param (
     [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 3, HelpMessage = 'Path to done.txt')]
     [ValidateScript({Test-Path $_})]
     [string] $DONE_FILE
-    )
+)
 
 function Get-DropboxFolder {
     $appDataFolder = [Environment]::GetFolderPath('ApplicationData')
     [string[]] $dbPath = Get-Content $appDataFolder\Dropbox\host.db
     [byte[]] $base64text = [System.Convert]::FromBase64String($dbPath[1])
     return [System.Text.Encoding]::ASCII.GetString($base64text)
-    }
+}
 
 $files = @("license.txt", "readme.markdown", "todo.ps1xml", "todo.psd1", "todo.psm1", "todo_cfg.ps1")
 
@@ -59,7 +59,8 @@ try
 
     & $msbuild /p:Configuration=Release /p:TargetVersion=v3.5 /fileLogger ".\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj" 
 }
-catch {
+catch 
+{
     throw "There was a problem compiling the dll. {0} Error: {1}" -f [Environment]::NewLine, $Error[0]
     break;
 }
@@ -75,43 +76,51 @@ if ($ModifyProfile)
     $choices = [System.Management.Automation.Host.ChoiceDescription[]]($Options)
 
     # if we weren't given the files.
-    if (!$TODO_FILE -and $DONE_FILE)
+    if (!$TODO_FILE)
     {
-        Write-Verbose "Finding DropboxFolder"
+        Write-Verbose "Finding Dropbox Folder"
         $DropboxFolder = Get-DropboxFolder
         Write-Debug "$DropboxFolder"
 
         $todofile = Test-Path $DropboxFolder\todo\todo.txt
-        $donefile = Test-Path $DropboxFolder\todo\done.txt
-
+        
         if ($todofile)
         {
             Write-Host "Todo File Located!" -foregroundcolor:Green
-            Write-Host "Do you wish to use the file located at $DropboxFolder\todo\todo.txt ?"
+            Write-Host "Do you wish to set your todo.txt path to $DropboxFolder\todo\todo.txt?"
             $Selection = $host.ui.PromptForChoice($caption,$message,$Choices,0)
             switch ($Selection)
             {
                 0 {[string] $TODO_FILE = "$DropboxFolder\todo\todo.txt"}
-                1 { $prompt = Read-Host "Please indicate the location of the todo.txt you wish to use?" }
+                1 { $TODO_FILE = Read-Host "Please indicate the location of the todo.txt you wish to use" }
             }
         }
         else {
-            $prompt = Read-Host "Please indicate the location of the todo.txt you wish to use?"
+            $TODO_FILE = Read-Host "Please indicate the location of the todo.txt you wish to use"
         }
+    }
+
+    if ($TODO_FILE -and !$DONE_FILE)
+    {
+        Write-Verbose "Finding DropboxFolder"
+        $DropboxFolder = Get-DropboxFolder
+        Write-Debug "$DropboxFolder"
+                
+        $donefile = Test-Path $DropboxFolder\todo\done.txt
 
         if ($donefile)
         {
             Write-Host "Done File Located!" -foregroundcolor:Green
-            Write-Host "Do you wish to use the file located at $DropboxFolder\todo\done.txt ?"
+            Write-Host "Do you wish to set your done.txt path to $DropboxFolder\todo\done.txt?"
             $Selection = $host.ui.PromptForChoice($caption,$message,$Choices,0)
             switch ($Selection)
             {
                 0 {[string] $DONE_FILE = "$DropboxFolder\todo\done.txt"}
-                1 { $prompt = Read-Host "Please indicate the location of the done.txt you wish to use?" }
+                1 { $DONE_FILE = Read-Host "Please indicate the location of the done.txt you wish to use" }
             }
         }
         else {
-            $prompt = Read-Host "Please indicate the location of the done.txt you wish to use?"
+            $DONE_FILE = Read-Host "Please indicate the location of the done.txt you wish to use"
         }
     }
 
@@ -122,25 +131,15 @@ if ($ModifyProfile)
         $stringBuilder = New-Object System.Text.StringBuilder
 
         # Check that the profile exists.
-        if (Test-Path $profile)
+        if (!(Test-Path $profile))
         {
-            # Get the current profile content
-            [string[]] $profilecontent = Get-Content $profile
-
-            # Doing a loop to preserve line breaks. :D
-            foreach ($line in $profilecontent)
-            {
-                [void] $stringBuilder.append("$line")
-                [void] $stringBuilder.append([Environment]::NewLine)
-            }
-            $debugString = $stringBuilder.toString()
-            Write-Host "$debugString"
-        }
-        else {
             # No File. Need to create one. Borrowed straight from the example of new-item. http://technet.microsoft.com/library/hh849795.aspx
             new-item -path $profile -itemtype file -force
         }
-
+     
+        [void] $stringBuilder.append([Environment]::NewLine)
+        [void] $stringBuilder.append([Environment]::NewLine)
+        [void] $stringBuilder.append("# Added by todo.txt PowerShell module")
         [void] $stringBuilder.append([Environment]::NewLine)
         [void] $stringBuilder.append("Import-Module todo")
         [void] $stringBuilder.append([Environment]::NewLine)
@@ -150,13 +149,14 @@ if ($ModifyProfile)
         [void] $stringBuilder.append([Environment]::NewLine)
         $newprofile = $stringBuilder.toString();
 
-        # Set the profile
-        Write-Verbose "Saving the profile."
-        Set-Content -Path $PROFILE -Value $newprofile
+        Write-Verbose "Updating the profile."
+        Add-Content $profile $newprofile
+    } else { 
+        Write-Host "Unable to update profile. You may have to run the deployment script again, or update your profile manually." 
     }
 }
-
 
 Write-Host ""
 Write-Host "Todo.txt deployed - you'll need to restart PowerShell" -NoNewLine
 if (!$ModifyProfile) {Write-Host "and call 'Import-Module todo' to load it"}
+Write-Host ""
