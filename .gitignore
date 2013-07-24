@@ -1,3 +1,4 @@
 msbuild.log
 target/
 test/
+packages/

@@ -13,14 +13,28 @@ param (
 
     [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 3, HelpMessage = 'Path to done.txt')]
     [ValidateScript({Test-Path $_})]
-    [string] $DONE_FILE
+    [string] $DONE_FILE,
+
+    [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 4, HelpMessage = 'Path to nuget.exe (if not already in your path)')]
+    [string] $nugetExePath
 )
+
+if(!$nugetExePath) 
+{
+	$nugetExePath = 'nuget'
+}
 
 function Get-DropboxFolder {
     $appDataFolder = [Environment]::GetFolderPath('ApplicationData')
     [string[]] $dbPath = Get-Content $appDataFolder\Dropbox\host.db
     [byte[]] $base64text = [System.Convert]::FromBase64String($dbPath[1])
     return [System.Text.Encoding]::ASCII.GetString($base64text)
+}
+
+function Get-ScriptDirectory
+{
+  $Invocation = (Get-Variable MyInvocation -Scope 1).Value
+  Split-Path $Invocation.MyCommand.Path
 }
 
 $files = @("license.txt", "readme.markdown", "todo.ps1xml", "todo.psd1", "todo.psm1", "todo_cfg.ps1")
@@ -48,25 +62,34 @@ if(!(Test-Path $StagingPath))
     mkdir $StagingPath | out-null
 }
 
-# Try and compile the .dll to make the magic happen.
-try
-{
-    Write-Verbose "Adding Build Utilities"
-    Add-Type -AssemblyName "Microsoft.Build.Utilities.v3.5"
-    $msbuild = [Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToDotNetFrameworkFile("msbuild.exe", "VersionLatest")
-
-    Write-Host $msbuild
-
-    & $msbuild /p:Configuration=Release /p:TargetVersion=v3.5 /fileLogger ".\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj" 
+$ttlSearchPath = Join-Path `
+		-Path (Get-ScriptDirectory) `
+		-ChildPath packages\todotxtlib.net.*\lib\net35\todotxtlib.net.dll
+		
+$ttlPath = Get-ChildItem -Path $ttlSearchPath -ErrorAction SilentlyContinue |
+	Select-Object -First 1 -ExpandProperty FullName 
+	
+If ($ttlPath -eq $null) {
+		
+	Write-Host "todotxtlib.net assembly not found; retrieving it from NuGet"
+		
+	# Attempt to get the Razor libraries from nuget
+	$packageDestination = ([string](Get-ScriptDirectory) + "\packages")
+	if(!(Test-Path $packageDestination))
+	{
+		mkdir $packageDestination
+	}
+		
+	$nugetCmd = '$nugetExePath install todotxtlib.net /OutputDirectory $packageDestination'
+	iex "& $nugetCmd"
+		
+	# Now that it's installed, get the razor path again
+	$ttlPath = Get-ChildItem -Path $ttlSearchPath |
+		Select-Object -First 1 -ExpandProperty FullName
 }
-catch 
-{
-    throw "There was a problem compiling the dll. {0} Error: {1}" -f [Environment]::NewLine, $Error[0]
-    break;
-}
 
-Write-Verbose "Copy the compiled dll to our staging directory."
-Copy-Item -path .\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.dll -destination $StagingPath -force
+Write-Verbose "Copy the todotxtlib.net dll to our staging directory."
+Copy-Item -path $ttlPath -destination $StagingPath -force
 
 if ($ModifyProfile)
 {
