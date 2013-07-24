@@ -34,6 +34,8 @@ Download and extract the files; open up PowerShell in that directory and run the
 * DONE_FILE: The path to your done.txt file. If you omit this, the script will attempt to make an educated guess as to the location, and will ask you during installation to confirm the path.
 * nugetExePath: The deployment script uses [nuget](http://nuget.org) to retrieve the [todotxtlib.net](https://github.com/hartez/todotxtlib.net) library. If nuget isn't already in your path, you can specify its location with this parameter.
 
+Thanks go out to @ArtWDrahn for making the deployment much more user-friendly.
+
 After the deployment script runs, you'll need to restart PowerShell. 
 
 You can manually import the module using 'import-module todo', or you can add it your PowerShell profile so it's always available when you start PowerShell. Just add the following line to your profile.ps1 file:
