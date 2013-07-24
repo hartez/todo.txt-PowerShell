@@ -4,7 +4,7 @@ param (
     [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 0, HelpMessage = 'Should the user profile be modified to automatically load ToDo Module?')]
     [switch] $ModifyProfile,
 
-    [parameter(Mandatory = $false, ValueFromPipeline = $true, Position = 1, HelpMessage = 'Path to install PowerShell Module too')]
+    [parameter(Mandatory = $false, ValueFromPipeline = $true, Position = 1, HelpMessage = 'Path to install PowerShell Module to')]
     [string] $InstallPath = $env:homedrive + "\" + $env:homepath + "\Documents\WindowsPowerShell\Modules\todo",
 
     [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 2, HelpMessage = 'Path to todo.txt')]

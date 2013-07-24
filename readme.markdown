@@ -24,7 +24,14 @@ Dependencies
 Installation
 ------------
 
-Download and extract the files; open up PowerShell in that directory and run the 'deploy.ps1' script. This will build and deploy the module to the appropriate folder (usually 'C:\\Users\\username\\Documents\\WindowsPowerShell\\Modules\\todo', though you can change this by passing in a different path as the first argument to 'deploy.ps1').
+Download and extract the files; open up PowerShell in that directory and run the 'deploy.ps1' script. This will build and deploy the module. 
+
+'deploy.ps1' takes some optional arguments:
+	
+* ModifyProfile: If you include this switch, the deployment script will add the Import-Module statement and path variables (described below) to your PowerShell profile.
+* InstallPath: The destination path for installing the module, if you want it somewhere other than the default destination ('C:\\Users\\username\\Documents\\WindowsPowerShell\\Modules\\todo').
+* TODO_FILE: The path to your todo.txt file. If you omit this, the script will attempt to make an educated guess as to the location, and will ask you during installation to confirm the path.
+* DONE_FILE: The path to your done.txt file. If you omit this, the script will attempt to make an educated guess as to the location, and will ask you during installation to confirm the path.
 
 After the deployment script runs, you'll need to restart PowerShell. 
 
