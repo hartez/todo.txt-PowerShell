@@ -34,7 +34,7 @@ Download and extract the files; open up PowerShell in that directory and run the
 * DONE_FILE: The path to your done.txt file. If you omit this, the script will attempt to make an educated guess as to the location, and will ask you during installation to confirm the path.
 * nugetExePath: The deployment script uses [nuget](http://nuget.org) to retrieve the [todotxtlib.net](https://github.com/hartez/todotxtlib.net) library. If nuget isn't already in your path, you can specify its location with this parameter.
 
-Thanks go out to @ArtWDrahn for making the deployment much more user-friendly.
+Thanks go out to [ArtWDrahn](https://github.com/ArtWDrahn) for making the deployment much more user-friendly.
 
 After the deployment script runs, you'll need to restart PowerShell. 
 
