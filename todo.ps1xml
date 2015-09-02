@@ -1,64 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
 <Configuration> 
 	<ViewDefinitions>
 		<View>
-		  <Name>todo</Name>
-		  <ViewSelectedBy>
-			<TypeName>todotxtlib.net.Task</TypeName>
-		  </ViewSelectedBy>
-		  <TableControl>
-			<TableHeaders>
-			  <TableColumnHeader>
-				<Label>Item</Label>
-				<Width>4</Width>
-			  </TableColumnHeader>
-			   <TableColumnHeader>
-			   <Label>Done</Label>
-				<Width>5</Width>
-			  </TableColumnHeader>
-			  <TableColumnHeader>
-				<Label>Pri</Label>
-				<Alignment>center</Alignment>
-				<Width>3</Width>
-			  </TableColumnHeader>
-			  <TableColumnHeader>
-				<Width>60</Width>
-			  </TableColumnHeader>
-			   <TableColumnHeader>
-				<Width>20</Width>
-				<Label>Contexts</Label>
-			  </TableColumnHeader>
-			  <TableColumnHeader>
-				<Width>20</Width>
-				<Label>Projects</Label>
-			  </TableColumnHeader>
-			</TableHeaders>
-			<TableRowEntries>
-			  <TableRowEntry>
-				<TableColumnItems>
-				  <TableColumnItem>
-				   <PropertyName>ItemNumber</PropertyName>
-				  </TableColumnItem>
-				  <TableColumnItem>
-				   <PropertyName>Completed</PropertyName>
-				  </TableColumnItem>
-				  <TableColumnItem>
-					<PropertyName>Priority</PropertyName>
-				  </TableColumnItem>
-				  <TableColumnItem>
-					<PropertyName>Body</PropertyName>
-				  </TableColumnItem>
-				   <TableColumnItem>
-					<ScriptBlock>[string]::join(",", $_.Contexts.ToArray())</ScriptBlock>
-				  </TableColumnItem>
-				  <TableColumnItem>
-					<ScriptBlock>[string]::join(",", $_.Projects.ToArray())</ScriptBlock>
-				  </TableColumnItem>
-				</TableColumnItems>
-			  </TableRowEntry>
-			</TableRowEntries>
-		  </TableControl>
+			<Name>TaskList-Custom</Name>
+			<ViewSelectedBy>
+				<TypeName>todotxtlib.net.Task</TypeName>
+			</ViewSelectedBy>
+			<CustomControl>
+				<CustomEntries>
+					<CustomEntry>
+						<CustomItem>
+							<ExpressionBinding>
+								<ScriptBlock>'{0,3}' -f $_.ItemNumber</ScriptBlock>
+							</ExpressionBinding>
+							<Text> </Text>
+							<ExpressionBinding>
+								<ScriptBlock>
+									$w = $_.Raw.Length;
+									$e = "";
+									if($w -gt ([console]::BufferWidth - 9)){$e = "..."; $w = ([console]::BufferWidth - 9);}
+									$_.Raw.Substring(0, $w) + $e;
+								</ScriptBlock>
+							</ExpressionBinding>
+						</CustomItem>
+					</CustomEntry>
+				</CustomEntries>
+			</CustomControl>
 		</View>
 	</ViewDefinitions>
 </Configuration>

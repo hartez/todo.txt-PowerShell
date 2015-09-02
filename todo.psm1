@@ -110,29 +110,27 @@ param()
 	
 	## TODO process command line options for overrides
 	
-	##TODO handle no arguments
-	
 	$cmd = $args[0]
 	
-	Write-Host ""
-	
+    $fore = $Host.UI.RawUI.ForegroundColor
+
 	if(!$cmd -or $cmd -eq "list" -or $cmd -eq "ls")
     {
 		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]}
 		
-		Format-Priority((Get-ToDo @todoArgs).ToNumberedOutput())
+        Format-Priority((Get-ToDo @todoArgs))
     }
 	elseif($cmd -eq "listall" -or $cmd -eq "lsa")
     {
 		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]; includeCompletedTasks=$TRUE}
 		
-		Format-Priority((Get-ToDo @todoArgs).ToNumberedOutput())
+		Format-Priority((Get-ToDo @todoArgs)) 
     }
 	elseif($cmd -eq "listfile" -or $cmd -eq "lf")
     {
 		$todoArgs = @{path=$args[1]; search=$args[2..$args.Length]}
 	
-		Format-Priority((Get-ToDo @todoArgs).ToNumberedOutput())
+		Format-Priority((Get-ToDo @todoArgs))
     }
 	elseif($cmd -eq "add" -or $cmd -eq "a")
 	{
@@ -152,15 +150,15 @@ param()
 	}
 	elseif($cmd -eq "listproj" -or $cmd -eq "lsprj" )
 	{
-		Get-Project | % {Write-Host $_}
+		Get-Project
 	}
 	elseif($cmd -eq "listcon" -or $cmd -eq "lsc" )
 	{
-		Get-Context | % {Write-Host $_}
+		Get-Context
 	}
 	elseif($cmd -eq "listpri" -or $cmd -eq "lsp")
 	{
-		Format-Priority((Get-Priority $args[1]).ToNumberedOutput())
+		Format-Priority((Get-Priority $args[1]))
 	}	
 	elseif($cmd -eq "replace")
 	{
@@ -205,8 +203,38 @@ param()
 	{
 		Get-Help Todo
 	}
+}
+
+function Format-Priority {
+param(
+		[object[]] $tasks
+	)
 	
-	Write-Host ""
+	$tasks | % {
+
+        if($_.Raw -match "\(A\)")
+		{
+			    $Host.UI.RawUI.ForegroundColor = $PRI_A
+		}
+		elseif($_.Raw -match "\(B\)")
+		{
+			    $Host.UI.RawUI.ForegroundColor = $PRI_B
+		}
+		elseif($_.Raw -match "\(C\)")
+		{
+			    $Host.UI.RawUI.ForegroundColor = $PRI_C
+		}
+		elseif($_.Raw -match "\([D-Z]\)")
+		{
+			    $Host.UI.RawUI.ForegroundColor = $PRI_X
+		}
+		else
+		{
+			    $Host.UI.RawUI.ForegroundColor = $fore
+		}
+
+        $_
+    }
 }
 
 function ParseToDoList {
@@ -455,36 +483,6 @@ param(
 	return ,$result
 }
 
-function Format-Priority {
-param(
-		[string[]] $tasks
-	)
-	
-	$tasks | % {
-		
-		if($_ -match "\(A\)")
-		{
-			Write-Host $_ -foregroundcolor $PRI_A
-		}
-		elseif($_ -match "\(B\)")
-		{
-			Write-Host $_ -foregroundcolor $PRI_B
-		}
-		elseif($_ -match "\(C\)")
-		{
-			Write-Host $_ -foregroundcolor $PRI_C
-		}
-		elseif($_ -match "\([D-Z]\)")
-		{
-			Write-Host $_ -foregroundcolor $PRI_X
-		}
-		else
-		{
-			Write-Host $_
-		}
-	}
-}
-
 function Add-ToDo {
 param(
 	[string[]] $item
@@ -509,12 +507,12 @@ param(
 
 function Get-Context {
 	$matches = (select-string $TODO_FILE -pattern '\s(@\w+)' -AllMatches) | % {$_.Matches}
-	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique
+	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique | Select -property @{N='Context';E={$_.Value}}
 }
 
 function Get-Project {
 	$matches = (select-string $TODO_FILE -pattern '\s(\+\w+)' -AllMatches) | % {$_.Matches}
-	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique 
+	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique | Select -property @{N='Project';E={$_.Value}}
 }
 
 function Get-Priority {
