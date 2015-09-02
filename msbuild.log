@@ -1,0 +1,414 @@
+Overriding target "SatelliteDllsProjectOutputGroup" in project "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" with target "SatelliteDllsProjectOutputGroup" from project "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.WinFX.targets".
+Build started 7/24/2013 4:35:38 PM.
+Project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj" on node 0 (default targets).
+Project file contains ToolsVersion="4.0", which is not supported by this version of MSBuild. Treating the project as if it had ToolsVersion="3.5".
+Building with tools version "3.5".
+Target "_CheckForInvalidConfigurationAndPlatform" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "Error" skipped, due to false condition; ( '$(_InvalidConfigurationError)' == 'true' ) was evaluated as ( '' == 'true' ).
+Task "Warning" skipped, due to false condition; ( '$(_InvalidConfigurationWarning)' == 'true' ) was evaluated as ( '' == 'true' ).
+Using "Message" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "Message"
+  Configuration=Release
+Done executing task "Message".
+Task "Message"
+  Platform=AnyCPU
+Done executing task "Message".
+Task "Error" skipped, due to false condition; ('$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')) was evaluated as ('bin\Release\' != '' and !HasTrailingSlash('bin\Release\')).
+Task "Error" skipped, due to false condition; ('$(BaseIntermediateOutputPath)' != '' and !HasTrailingSlash('$(BaseIntermediateOutputPath)')) was evaluated as ('obj\' != '' and !HasTrailingSlash('obj\')).
+Task "Error" skipped, due to false condition; ('$(IntermediateOutputPath)' != '' and !HasTrailingSlash('$(IntermediateOutputPath)')) was evaluated as ('obj\Release\' != '' and !HasTrailingSlash('obj\Release\')).
+Done building target "_CheckForInvalidConfigurationAndPlatform" in project "todotxtlib.net.3.5.csproj".
+Target "CheckPrerequisites" in file "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\.nuget\NuGet.settings.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "Error" skipped, due to false condition; (!Exists('$(NuGetExePath)')) was evaluated as (!Exists('..\.nuget\nuget.exe')).
+Done building target "CheckPrerequisites" in project "todotxtlib.net.3.5.csproj".
+Target "RestorePackages" in file "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\.nuget\NuGet.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "Exec" skipped, due to false condition; (Exists('$(PackagesConfig)')) was evaluated as (Exists('C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\packages.config')).
+Done building target "RestorePackages" in project "todotxtlib.net.3.5.csproj".
+Target "EntityDeploy" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Data.Entity.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "EntityDeploy" task from assembly "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Data.Entity.Build.Tasks.dll".
+Task "EntityDeploy"
+  Processing 0 EDMX files.
+  Finished processing 0 EDMX files.
+Done executing task "EntityDeploy".
+Done building target "EntityDeploy" in project "todotxtlib.net.3.5.csproj".
+Target "GetFrameworkPaths" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "GetFrameworkPath" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "GetFrameworkPath"
+Done executing task "GetFrameworkPath".
+Using "GetFrameworkSdkPath" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "GetFrameworkSdkPath"
+  Found the Microsoft Windows SDK installed at "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\".
+Done executing task "GetFrameworkSdkPath".
+Done building target "GetFrameworkPaths" in project "todotxtlib.net.3.5.csproj".
+Target "PrepareForBuild" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "FindAppConfigFile" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "FindAppConfigFile"
+Done executing task "FindAppConfigFile".
+Using "MakeDir" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "MakeDir"
+Done executing task "MakeDir".
+Done building target "PrepareForBuild" in project "todotxtlib.net.3.5.csproj".
+Target "PreBuildEvent" skipped, due to false condition; ('$(PreBuildEvent)'!='') was evaluated as (''!='').
+Target "SplitProjectReferencesByType" skipped, due to false condition; ('@(ProjectReference)'!='') was evaluated as (''!='').
+Target "SplitProjectReferencesByType" skipped, due to false condition; ('@(ProjectReference)'!='') was evaluated as (''!='').
+Target "_SplitProjectReferencesByFileExistence" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "ResolveNonMSBuildProjectOutput" skipped, due to false condition; ('$(BuildingInsideVisualStudio)'=='true' and '@(NonVCProjectReference)'!='') was evaluated as (''=='true' and ''!='').
+Done building target "_SplitProjectReferencesByFileExistence" in project "todotxtlib.net.3.5.csproj".
+Target "ResolveProjectReferences" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "MSBuild" skipped, due to false condition; ('@(NonVCProjectReference)'!='' and ('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true' or '$(BuildProjectReferences)' != 'true') and '@(_MSBuildProjectReferenceExistent)' != '') was evaluated as (''!='' and ('' == 'true' or '' == 'true' or 'true' != 'true') and '' != '').
+Task "MSBuild" skipped, due to false condition; ('@(NonVCProjectReference)'!='' and '$(BuildingInsideVisualStudio)' != 'true' and '$(BuildingSolutionFile)' != 'true' and '$(BuildProjectReferences)' == 'true' and '@(_MSBuildProjectReferenceExistent)' != '') was evaluated as (''!='' and '' != 'true' and '' != 'true' and 'true' == 'true' and '' != '').
+Task "MSBuild" skipped, due to false condition; ('@(NonVCProjectReference)'!='' and '$(BuildingProject)'=='true' and '@(_MSBuildProjectReferenceExistent)'!='') was evaluated as (''!='' and 'true'=='true' and ''!='').
+Task "Warning" skipped, due to false condition; ('@(NonVCProjectReference)'!='' and '@(_MSBuildProjectReferenceNonexistent)'!='') was evaluated as (''!='' and ''!='').
+Done building target "ResolveProjectReferences" in project "todotxtlib.net.3.5.csproj".
+Target "SplitProjectReferencesByType" skipped, due to false condition; ('@(ProjectReference)'!='') was evaluated as (''!='').
+Target "ResolveVCProjectReferences" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "ResolveNonMSBuildProjectOutput" skipped, due to false condition; ('$(BuildingInsideVisualStudio)'=='true' and '@(VCProjectReference)'!='') was evaluated as (''=='true' and ''!='').
+Task "ResolveVCProjectOutput" skipped, due to false condition; ('$(BuildingSolutionFile)'=='true' and '@(VCProjectReference)'!='') was evaluated as (''=='true' and ''!='').
+Task "Error" skipped, due to false condition; ('$(BuildingSolutionFile)'!='true' and '$(BuildingInsideVisualStudio)'!='true' and '@(VCProjectReference)'!='') was evaluated as (''!='true' and ''!='true' and ''!='').
+Done building target "ResolveVCProjectReferences" in project "todotxtlib.net.3.5.csproj".
+Target "ResolveNativeReferences" skipped, due to false condition; ('@(NativeReference)'!='') was evaluated as (''!='').
+Target "GetFrameworkPaths" skipped. Previously built successfully.
+Target "GetWinFXPath" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.WinFX.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "GetWinFXPath" task from assembly "PresentationBuildTasks, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35".
+Task "GetWinFXPath"
+  
+  
+  Microsoft (R) Build Task 'GetWinFXPath' Version '3.0.6920.5011 built by: Win7SP1'.
+  Copyright (C) Microsoft Corporation 2005. All rights reserved.
+  
+  
+Done executing task "GetWinFXPath".
+Done building target "GetWinFXPath" in project "todotxtlib.net.3.5.csproj".
+Target "PrepareForBuild" skipped. Previously built successfully.
+Target "ResolveAssemblyReferences" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "ResolveAssemblyReference" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "ResolveAssemblyReference"
+  Assemblies:
+      System
+      System.Core
+      System.Xml.Linq
+      System.Data.DataSetExtensions
+      System.Data
+      System.Xml
+      WindowsBase
+  AssemblyFiles:
+  CandidateAssemblyFiles:
+  TargetFrameworkDirectories:
+      C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\,C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0,C:\Windows\Microsoft.NET\Framework64\v3.5,C:\Windows\Microsoft.NET\Framework64\v3.0,C:\Windows\Microsoft.NET\Framework64\v2.0.50727
+  InstalledAssemblyTables:
+  IgnoreInstalledAssemblyTable:
+      False
+  SearchPaths:
+      {CandidateAssemblyFiles}
+      {HintPathFromItem}
+      {TargetFrameworkDirectory}
+      {Registry:Software\Microsoft\.NetFramework,v3.5,AssemblyFoldersEx}
+      {AssemblyFolders}
+      {GAC}
+      {RawFileName}
+      bin\Release\
+  AllowedAssemblyExtensions:
+      .exe
+      .dll
+  AllowedRelatedFileExtensions:
+      .pdb
+      .xml
+  AppConfigFile:
+      
+  AutoUnify:
+      True
+  TargetProcessorArchitecture:
+      AMD64
+  StateFile:
+      obj\Release\ResolveAssemblyReference.cache
+  InstalledAssemblySubsetTables:
+  IgnoreInstalledAssemblySubsetTable:
+      False
+  TargetFrameworkSubsets:
+  FullTargetFrameworkSubsetNames:
+      Full
+  No TargetFramework subset exclusion list will be generated. No TargetFrameworkSubsets were provided and no additional subset files were passed in to InstalledAssemblySubsetTables.
+  Primary reference "System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".
+      Resolved file path is "C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.Data.dll".
+      Reference found at search path location "{TargetFrameworkDirectory}".
+          For SearchPath "{TargetFrameworkDirectory}".
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Data.exe", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Data.dll", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Data.exe", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Data.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.5\System.Data.exe", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.5\System.Data.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.0\System.Data.exe", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.0\System.Data.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.Data.exe", but it didn't exist.
+      This reference is not "CopyLocal" because it's a prerequisite file.
+  Primary reference "System.Data.DataSetExtensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".
+      Resolved file path is "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Data.DataSetExtensions.dll".
+      Reference found at search path location "{TargetFrameworkDirectory}".
+          For SearchPath "{TargetFrameworkDirectory}".
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Data.DataSetExtensions.exe", but it didn't exist.
+      This reference is not "CopyLocal" because it's in a Frameworks directory.
+  Primary reference "WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35".
+      Resolved file path is "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsBase.dll".
+      Reference found at search path location "{TargetFrameworkDirectory}".
+          For SearchPath "{TargetFrameworkDirectory}".
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\WindowsBase.exe", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\WindowsBase.dll", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsBase.exe", but it didn't exist.
+      This reference is not "CopyLocal" because it's a prerequisite file.
+  Primary reference "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".
+      Resolved file path is "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Core.dll".
+      Reference found at search path location "{TargetFrameworkDirectory}".
+          For SearchPath "{TargetFrameworkDirectory}".
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Core.exe", but it didn't exist.
+      This reference is not "CopyLocal" because it's in a Frameworks directory.
+  Primary reference "System.Xml.Linq, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".
+      Resolved file path is "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Xml.Linq.dll".
+      Reference found at search path location "{TargetFrameworkDirectory}".
+          For SearchPath "{TargetFrameworkDirectory}".
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Xml.Linq.exe", but it didn't exist.
+      This reference is not "CopyLocal" because it's in a Frameworks directory.
+  Primary reference "System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".
+      Resolved file path is "C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.dll".
+      Reference found at search path location "{TargetFrameworkDirectory}".
+          For SearchPath "{TargetFrameworkDirectory}".
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.exe", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.dll", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.exe", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.5\System.exe", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.5\System.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.0\System.exe", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.0\System.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.exe", but it didn't exist.
+      This reference is not "CopyLocal" because it's a prerequisite file.
+  Primary reference "System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".
+      Resolved file path is "C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.Xml.dll".
+      Reference found at search path location "{TargetFrameworkDirectory}".
+          For SearchPath "{TargetFrameworkDirectory}".
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Xml.exe", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Xml.dll", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Xml.exe", but it didn't exist.
+          Considered "C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Xml.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.5\System.Xml.exe", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.5\System.Xml.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.0\System.Xml.exe", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v3.0\System.Xml.dll", but it didn't exist.
+          Considered "C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.Xml.exe", but it didn't exist.
+      This reference is not "CopyLocal" because it's a prerequisite file.
+Done executing task "ResolveAssemblyReference".
+Done building target "ResolveAssemblyReferences" in project "todotxtlib.net.3.5.csproj".
+Target "ResolveComReferences" skipped, due to false condition; ('@(COMReference)'!='' or '@(COMFileReference)'!='') was evaluated as (''!='' or ''!='').
+Target "MarkupCompilePass1" skipped, due to false condition; ('@(Page)@(ApplicationDefinition)' != '' ) was evaluated as ('' != '' ).
+Target "MarkupCompilePass2ForMainAssembly" skipped, due to false condition; ('$(_RequireMCPass2ForMainAssembly)' == 'true' ) was evaluated as ('false' == 'true' ).
+Target "FileClassification" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.WinFX.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "FileClassifier" skipped, due to false condition; ('@(GeneratedBaml)@(Resource)@(Font)' != '') was evaluated as ('' != '').
+Task "Message" skipped, due to false condition; ('$(MSBuildTargetsVerbose)'=='true') was evaluated as (''=='true').
+Task "Message" skipped, due to false condition; ('$(MSBuildTargetsVerbose)'=='true') was evaluated as (''=='true').
+Done building target "FileClassification" in project "todotxtlib.net.3.5.csproj".
+Target "MainResourcesGeneration" skipped, due to false condition; ('@(MainEmbeddedFiles)'!='') was evaluated as (''!='').
+Target "AssignWinFXEmbeddedResource" skipped, due to false condition; ('@(WinFXEmbeddedResource)' != '') was evaluated as ('' != '').
+Target "AssignTargetPaths" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "AssignTargetPath" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "AssignTargetPath"
+Done executing task "AssignTargetPath".
+Task "AssignTargetPath"
+Done executing task "AssignTargetPath".
+Task "AssignTargetPath"
+Done executing task "AssignTargetPath".
+Task "AssignTargetPath"
+Done executing task "AssignTargetPath".
+Task "AssignTargetPath" skipped, due to false condition; ('@(_DeploymentBaseManifestWithTargetPath)'=='' and '%(None.Extension)'=='.manifest') was evaluated as (''=='' and ''=='.manifest').
+Done building target "AssignTargetPaths" in project "todotxtlib.net.3.5.csproj".
+Target "AssignTargetPaths" skipped. Previously built successfully.
+Target "SplitResourcesByCulture" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "Warning" skipped, due to false condition; ('@(ResxWithNoCulture)'!='') was evaluated as (''!='').
+Task "Warning" skipped, due to false condition; ('@(ResxWithCulture)'!='') was evaluated as (''!='').
+Task "Warning" skipped, due to false condition; ('@(NonResxWithCulture)'!='') was evaluated as (''!='').
+Task "Warning" skipped, due to false condition; ('@(NonResxWithNoCulture)'!='') was evaluated as (''!='').
+Using "AssignCulture" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "AssignCulture"
+Done executing task "AssignCulture".
+Done building target "SplitResourcesByCulture" in project "todotxtlib.net.3.5.csproj".
+Target "CreateManifestResourceNames" skipped, due to false condition; ('@(EmbeddedResource)' != '') was evaluated as ('' != '').
+Target "ResolveAssemblyReferences" skipped. Previously built successfully.
+Target "SplitResourcesByCulture" skipped. Previously built successfully.
+Target "CoreResGen" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "GenerateResource" skipped, due to false condition; ( '%(EmbeddedResource.Type)' == 'Resx' and '%(EmbeddedResource.GenerateResource)' != 'false') was evaluated as ( '' == 'Resx' and '' != 'false').
+Done building target "CoreResGen" in project "todotxtlib.net.3.5.csproj".
+Target "CompileLicxFiles" skipped, due to false condition; ('@(_LicxFile)'!='') was evaluated as (''!='').
+Target "ResolveKeySource" skipped, due to false condition; ($(SignManifests) == 'true' or $(SignAssembly) == 'true') was evaluated as ( == 'true' or  == 'true').
+Target "ResolveReferences" skipped. Previously built successfully.
+Target "ResolveKeySource" skipped, due to false condition; ($(SignManifests) == 'true' or $(SignAssembly) == 'true') was evaluated as ( == 'true' or  == 'true').
+Target "ResolveComReferences" skipped, due to false condition; ('@(COMReference)'!='' or '@(COMFileReference)'!='') was evaluated as (''!='' or ''!='').
+Target "ResolveNativeReferences" skipped, due to false condition; ('@(NativeReference)'!='') was evaluated as (''!='').
+Target "_SetExternalWin32ManifestProperties" skipped, due to false condition; ('$(GenerateClickOnceManifests)'=='true' or '@(NativeReference)'!='' or '@(ResolvedIsolatedComModules)'!='') was evaluated as (''=='true' or ''!='' or ''!='').
+Target "_SetEmbeddedWin32ManifestProperties" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "GetFrameworkPath"
+Done executing task "GetFrameworkPath".
+Done building target "_SetEmbeddedWin32ManifestProperties" in project "todotxtlib.net.3.5.csproj".
+Target "_GenerateCompileInputs" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "Warning" skipped, due to false condition; ('@(ManifestResourceWithNoCulture)'!='' and '%(ManifestResourceWithNoCulture.EmittedForCompatibilityOnly)'=='') was evaluated as (''!='' and ''=='').
+Task "Warning" skipped, due to false condition; ('@(ManifestNonResxWithNoCultureOnDisk)'!='' and '%(ManifestNonResxWithNoCultureOnDisk.EmittedForCompatibilityOnly)'=='') was evaluated as (''!='' and ''=='').
+Done building target "_GenerateCompileInputs" in project "todotxtlib.net.3.5.csproj".
+Target "_TimeStampBeforeCompile" skipped, due to false condition; ('$(RunPostBuildEvent)'=='OnOutputUpdated' or ('$(RegisterForComInterop)'=='true' and '$(OutputType)'=='library')) was evaluated as (''=='OnOutputUpdated' or (''=='true' and 'Library'=='library')).
+Target "_ComputeNonExistentFileProperty" skipped, due to false condition; (
+            ('$(BuildingInsideVisualStudio)' == 'true')
+            and
+            (
+                ('$(BuildingProject)' == 'false')
+                or
+                ('$(UseHostCompilerIfAvailable)' == 'true')
+            )
+            ) was evaluated as (
+            ('' == 'true')
+            and
+            (
+                ('true' == 'false')
+                or
+                ('true' == 'true')
+            )
+            ).
+Target "CoreCompile" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.CSharp.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+Input files: C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Data.DataSetExtensions.dll;..\TaskList.cs;..\Task.cs;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj;C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.Data.dll;C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.dll;C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Core.dll;Properties\AssemblyInfo.cs;..\TaskEqualityComparer.cs;C:\Windows\Microsoft.NET\Framework64\v2.0.50727\System.Xml.dll;C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.CSharp.targets;C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Xml.Linq.dll;..\StringExtensions.cs;C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets;C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsBase.dll;..\TaskException.cs
+Output files: obj\Release\todotxtlib.net.dll;obj\Release\todotxtlib.net.pdb
+Done building target "CoreCompile" in project "todotxtlib.net.3.5.csproj".
+Target "_TimeStampAfterCompile" skipped, due to false condition; ('$(RunPostBuildEvent)'=='OnOutputUpdated' or ('$(RegisterForComInterop)'=='true' and '$(OutputType)'=='library')) was evaluated as (''=='OnOutputUpdated' or (''=='true' and 'Library'=='library')).
+Target "PrepareResourcesForSatelliteAssemblies" skipped, due to false condition; ('$(UICulture)' != '') was evaluated as ('' != '').
+Target "MergeLocalizationDirectives" skipped, due to false condition; ('@(GeneratedLocalizationFiles)' !='') was evaluated as ('' !='').
+Target "UnmanagedUnregistration" skipped, due to false condition; ((('$(_AssemblyTimestampBeforeCompile)' != '$(_AssemblyTimestampAfterCompile)' or '$(RegisterForComInterop)' != 'true' or '$(OutputType)' != 'library') or
+                    ('$(_AssemblyTimestampBeforeCompile)' == '')) and
+                   Exists('@(_UnmanagedRegistrationCache)')) was evaluated as ((('' != '' or '' != 'true' or 'Library' != 'library') or
+                    ('' == '')) and
+                   Exists('obj\todotxtlib.net.3.5.csproj.UnmanagedRegistration.cache')).
+Target "GenerateSerializationAssemblies" skipped, due to false condition; ('$(_SGenGenerateSerializationAssembliesConfig)' == 'On' or ('@(WebReferenceUrl)'!='' and '$(_SGenGenerateSerializationAssembliesConfig)' == 'Auto')) was evaluated as ('Auto' == 'On' or (''!='' and 'Auto' == 'Auto')).
+Target "_GenerateSatelliteAssemblyInputs" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "Warning" skipped, due to false condition; ('@(ManifestResourceWithCulture)'!='' and '%(ManifestResourceWithCulture.EmittedForCompatibilityOnly)'=='') was evaluated as (''!='' and ''=='').
+Task "Warning" skipped, due to false condition; ('@(ManifestNonResxWithCultureOnDisk)'!='' and '%(ManifestNonResxWithCultureOnDisk.EmittedForCompatibilityOnly)'=='') was evaluated as (''!='' and ''=='').
+Done building target "_GenerateSatelliteAssemblyInputs" in project "todotxtlib.net.3.5.csproj".
+Target "ComputeIntermediateSatelliteAssemblies" skipped, due to false condition; (@(EmbeddedResource->'%(WithCulture)') != '') was evaluated as ( != '').
+Target "GenerateSatelliteAssemblies" skipped, due to false condition; ('@(_SatelliteAssemblyResourceInputs)' != '') was evaluated as ('' != '').
+Target "GenerateManifests" skipped, due to false condition; ('$(GenerateClickOnceManifests)'=='true' or '@(NativeReference)'!='' or '@(ResolvedIsolatedComModules)'!='') was evaluated as (''=='true' or ''!='' or ''!='').
+Target "GetTargetPath" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Building target "GetTargetPath" completely.
+No input files were specified.
+Done building target "GetTargetPath" in project "todotxtlib.net.3.5.csproj".
+Target "ComputeIntermediateSatelliteAssemblies" skipped, due to false condition; (@(EmbeddedResource->'%(WithCulture)') != '') was evaluated as ( != '').
+Target "_CopyFilesMarkedCopyLocal" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "Copy" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "Copy"
+Done executing task "Copy".
+Done building target "_CopyFilesMarkedCopyLocal" in project "todotxtlib.net.3.5.csproj".
+Target "AssignTargetPaths" skipped. Previously built successfully.
+Target "_SplitProjectReferencesByFileExistence" skipped. Previously built successfully.
+Target "GetCopyToOutputDirectoryItems" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "MSBuild" skipped, due to false condition; ('@(_MSBuildProjectReferenceExistent)' != '' and '$(_GetChildProjectCopyToOutputDirectoryItems)' == 'true' and '%(_MSBuildProjectReferenceExistent.Private)' != 'false') was evaluated as ('' != '' and 'true' == 'true' and '' != 'false').
+Task "AssignTargetPath"
+Done executing task "AssignTargetPath".
+Done building target "GetCopyToOutputDirectoryItems" in project "todotxtlib.net.3.5.csproj".
+Target "_CopyOutOfDateSourceItemsToOutputDirectory" skipped, due to false condition; ( '@(_SourceItemsToCopyToOutputDirectory)' != '' ) was evaluated as ( '' != '' ).
+Target "_CopyOutOfDateSourceItemsToOutputDirectoryAlways" skipped, due to false condition; ( '@(_SourceItemsToCopyToOutputDirectoryAlways)' != '' ) was evaluated as ( '' != '' ).
+Target "_CopyAppConfigFile" skipped, due to false condition; ( '@(AppConfigWithTargetPath)' != '' ) was evaluated as ( '' != '' ).
+Target "_CopyManifestFiles" skipped, due to false condition; ( '$(_DeploymentCopyApplicationManifest)'=='true' or '$(GenerateClickOnceManifests)'=='true' ) was evaluated as ( ''=='true' or ''=='true' ).
+Target "_SGenCheckForOutputs" skipped, due to false condition; ('$(_SGenGenerateSerializationAssembliesConfig)' == 'On' or ('@(WebReferenceUrl)'!='' and '$(_SGenGenerateSerializationAssembliesConfig)' == 'Auto')) was evaluated as ('Auto' == 'On' or (''!='' and 'Auto' == 'Auto')).
+Target "CopyFilesToOutputDirectory" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "Copy"
+  Did not copy from file "obj\Release\todotxtlib.net.dll" to file "bin\Release\todotxtlib.net.dll" because the "SkipUnchangedFiles" parameter was set to "true" in the project and the files' sizes and timestamps match.
+Done executing task "Copy".
+Task "Message"
+  todotxtlib.net.3.5 -> C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.dll
+Done executing task "Message".
+Task "Copy"
+Done executing task "Copy".
+Task "Copy" skipped, due to false condition; ('$(_SGenDllCreated)'=='true') was evaluated as ('false'=='true').
+Task "Copy"
+  Did not copy from file "obj\Release\todotxtlib.net.pdb" to file "bin\Release\todotxtlib.net.pdb" because the "SkipUnchangedFiles" parameter was set to "true" in the project and the files' sizes and timestamps match.
+Done executing task "Copy".
+Task "Copy" skipped, due to false condition; ('$(_DocumentationFileProduced)'=='true') was evaluated as ('false'=='true').
+Task "Copy"
+Done executing task "Copy".
+Task "Copy"
+Done executing task "Copy".
+Done building target "CopyFilesToOutputDirectory" in project "todotxtlib.net.3.5.csproj".
+Target "UnmanagedRegistration" skipped, due to false condition; ('$(RegisterForComInterop)'=='true' and '$(OutputType)'=='library') was evaluated as (''=='true' and 'Library'=='library').
+Target "_CheckForCompileOutputs" skipped. Previously built successfully.
+Target "_SGenCheckForOutputs" skipped, due to false condition; ('$(_SGenGenerateSerializationAssembliesConfig)' == 'On' or ('@(WebReferenceUrl)'!='' and '$(_SGenGenerateSerializationAssembliesConfig)' == 'Auto')) was evaluated as ('Auto' == 'On' or (''!='' and 'Auto' == 'Auto')).
+Target "_CleanGetCurrentAndPriorFileWrites" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Using "ReadLinesFromFile" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "ReadLinesFromFile"
+Done executing task "ReadLinesFromFile".
+Using "ConvertToAbsolutePath" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "ConvertToAbsolutePath"
+Done executing task "ConvertToAbsolutePath".
+Using "FindUnderPath" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "FindUnderPath"
+  Comparison path is "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5".
+Done executing task "FindUnderPath".
+Task "FindUnderPath"
+  Comparison path is "bin\Release\".
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\ResolveAssemblyReference.cache" is outside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.dll" is outside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.pdb" is outside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.dll" is inside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.pdb" is inside the comparison path.
+Done executing task "FindUnderPath".
+Task "FindUnderPath"
+  Comparison path is "obj\Release\".
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\ResolveAssemblyReference.cache" is inside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.dll" is inside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.pdb" is inside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.dll" is outside the comparison path.
+  Path "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.pdb" is outside the comparison path.
+Done executing task "FindUnderPath".
+Using "RemoveDuplicates" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "RemoveDuplicates"
+Done executing task "RemoveDuplicates".
+Done building target "_CleanGetCurrentAndPriorFileWrites" in project "todotxtlib.net.3.5.csproj".
+Target "IncrementalClean" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "FindUnderPath"
+  Comparison path is "bin\Release\".
+Done executing task "FindUnderPath".
+Task "FindUnderPath"
+  Comparison path is "obj\Release\".
+Done executing task "FindUnderPath".
+Using "Delete" task from assembly "Microsoft.Build.Tasks.v3.5, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+Task "Delete"
+Done executing task "Delete".
+Task "RemoveDuplicates"
+Done executing task "RemoveDuplicates".
+Task "WriteLinesToFile" skipped, due to false condition; ('@(_CleanUnfilteredPriorFileWrites)'!='@(_CleanUniqueRemainingFileWritesAfterIncrementalClean)') was evaluated as ('C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.dll;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.pdb;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\ResolveAssemblyReference.cache;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.dll;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.pdb'!='C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.dll;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\bin\Release\todotxtlib.net.pdb;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\ResolveAssemblyReference.cache;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.dll;C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\obj\Release\todotxtlib.net.pdb').
+Done building target "IncrementalClean" in project "todotxtlib.net.3.5.csproj".
+Target "PostBuildEvent" skipped, due to false condition; (
+            '$(PostBuildEvent)'!=''
+            and
+            (
+                '$(RunPostBuildEvent)'!='OnOutputUpdated'
+                or
+                '$(_AssemblyTimestampBeforeCompile)'!='$(_AssemblyTimestampAfterCompile)'
+            )
+        ) was evaluated as (
+            ''!=''
+            and
+            (
+                ''!='OnOutputUpdated'
+                or
+                ''!=''
+            )
+        ).
+Target "CoreBuild" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Task "CallTarget" skipped, due to false condition; ('$(UnloadProjectsOnCompletion)'=='true') was evaluated as ('false'=='true').
+Task "CallTarget" skipped, due to false condition; ('$(UnloadProjectsOnCompletion)'=='true') was evaluated as ('false'=='true').
+Task "CallTarget" skipped, due to false condition; ('$(UnloadProjectsOnCompletion)'=='true') was evaluated as ('false'=='true').
+Done building target "CoreBuild" in project "todotxtlib.net.3.5.csproj".
+Target "Build" in file "C:\Windows\Microsoft.NET\Framework64\v3.5\Microsoft.Common.targets" from project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj":
+Building target "Build" completely.
+No input files were specified.
+Done building target "Build" in project "todotxtlib.net.3.5.csproj".
+Done Building Project "C:\Users\hartez\Documents\GitHub\todo.txt-PowerShell\todotxtlib.net\todotxtlib.net.3.5\todotxtlib.net.3.5.csproj" (default targets).
+
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.13
