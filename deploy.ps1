@@ -19,11 +19,6 @@ param (
     [string] $nugetExePath
 )
 
-if(!$nugetExePath) 
-{
-	$nugetExePath = 'nuget'
-}
-
 function Get-DropboxFolder {
     $appDataFolder = [Environment]::GetFolderPath('ApplicationData')
     [string[]] $dbPath = Get-Content $appDataFolder\Dropbox\host.db
@@ -38,6 +33,31 @@ function Get-ScriptDirectory
 }
 
 $files = @("license.txt", "readme.markdown", "todo.ps1xml", "todo.psd1", "todo.psm1", "todo_cfg.ps1")
+
+
+$ttlSearchPath = Join-Path `
+		-Path (Get-ScriptDirectory) `
+		-ChildPath packages\todotxtlib.net.*\lib\net35\todotxtlib.net.dll
+		
+$ttlPath = Get-ChildItem -Path $ttlSearchPath -ErrorAction SilentlyContinue |
+	Select-Object -First 1 -ExpandProperty FullName 
+
+if ($ttlpath -eq $null)
+{
+    # todotxtlib.net assembly not found - we will need nuget
+
+    if(!$nugetExePath)
+    {
+        Write-Host "nuget.exe path not on command line. Using nuget.exe in current path"
+    	$nugetExePath = 'nuget'
+    }
+
+    if (!(Test-Path -Path $nugetExePath -PathType Leaf))
+    {
+        Write-Host "nuget.exe not found at $nugetExePath. -nugetExePath must be full path name of nuget.exe. Exiting."
+        exit
+    }
+}
 
 if (!(Test-Path $InstallPath))
 {
@@ -62,12 +82,6 @@ if(!(Test-Path $StagingPath))
     mkdir $StagingPath | out-null
 }
 
-$ttlSearchPath = Join-Path `
-		-Path (Get-ScriptDirectory) `
-		-ChildPath packages\todotxtlib.net.*\lib\net35\todotxtlib.net.dll
-		
-$ttlPath = Get-ChildItem -Path $ttlSearchPath -ErrorAction SilentlyContinue |
-	Select-Object -First 1 -ExpandProperty FullName 
 	
 If ($ttlPath -eq $null) {
 		
@@ -181,5 +195,5 @@ if ($ModifyProfile)
 
 Write-Host ""
 Write-Host "Todo.txt deployed - you'll need to restart PowerShell" -NoNewLine
-if (!$ModifyProfile) {Write-Host "and call 'Import-Module todo' to load it"}
+if (!$ModifyProfile) {Write-Host " and call 'Import-Module todo' to load it"}
 Write-Host ""
