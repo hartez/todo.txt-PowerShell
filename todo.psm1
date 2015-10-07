@@ -235,6 +235,8 @@ param(
 
         $_
     }
+
+    $Host.UI.RawUI.ForegroundColor = $fore
 }
 
 function ParseToDoList {
@@ -428,21 +430,12 @@ function Set-ToDoPriority {
 		
 		if($item -le $list.Count)
 		{
-			$currentPriority = $list.GetPriority($priority)
-			
-			if($currentPriority.Count -gt 0)
+    		$list.SetItemPriority($item, $priority)
+			$list.ToOutput() | Set-Content $TODO_FILE
+			if($TODOTXT_VERBOSE)
 			{
-				Write-Host "There is already an item with this priority"
-			}
-			else
-			{
-				$list.SetItemPriority($item, $priority)
-				$list.ToOutput() | Set-Content $TODO_FILE
-				if($TODOTXT_VERBOSE)
-				{
-					Write-Host ("$item " + $list[$item - 1].Text)
-					Write-Host "TODO: $item prioritized ($priority)."
-				}
+				Write-Host ("$item " + $list[$item - 1].Text)
+				Write-Host "TODO: $item prioritized ($priority)."
 			}
 		}
 		else
