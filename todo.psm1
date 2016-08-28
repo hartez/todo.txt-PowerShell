@@ -48,57 +48,57 @@ function LoadConfiguration() {
 
 <# 
 .Synopsis
-	TODO.TXT Command Line Interface for PowerShell 2.0
+	TODO.TXT Command Line Interface for PowerShell 3.0
 
 .Description
-	The ToDo function is an entry point for running functions to manipulate a todo.txt file 
+	The Todo function is an entry point for running functions to manipulate a todo.txt file 
 	using the same command syntax as todo.sh
 
 .Example
-	ToDo list 
+	Todo list 
 	
 	List all of the todo items in your todo file. 
 
 .Example
-	ToDo listall 
+	Todo listall 
 	
 	List all of the items in the todo and done files.
 
 .Example
-	ToDo add "THING I NEED TO DO +project @context"
+	Todo add "THING I NEED TO DO +project @context"
 	
 	Adds "THING I NEED TO DO" to your todo.txt file on its own line, 
 	assigning it to a project and context. 
 
 .Example 
-	ToDo append 34 "TEXT TO APPEND"
+	Todo append 34 "TEXT TO APPEND"
 
 	Adds "TEXT TO APPEND" to the end of the task on line 34.
 
 .Example 
-	ToDo archive
+	Todo archive
 	
 	Moves all done tasks from todo.txt to done.txt.
 	
 .Example 
 
-	ToDo del 34 
+	Todo del 34 
 
 	Deletes the task on line 34 in todo.txt.
 
 .Example 
 
-	ToDo del 34 "foo"
+	Todo del 34 "foo"
 	
 	Deletes the text "foo" from line 34 in todo.txt
 	
 .Example 
 
-	ToDo move 34 .\otherfile.txt
+	Todo move 34 .\otherfile.txt
 	
 	Moves item 34 to otherfile.txt
 #>
-function ToDo {
+function Todo {
 param()
 	
 	if(!$configLocation)
@@ -162,23 +162,23 @@ param()
 	}	
 	elseif($cmd -eq "replace")
 	{
-		Replace-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
+		Replace-Todo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
 	elseif($cmd -eq "prepend" -or $cmd -eq "prep")
 	{
-		Prepend-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
+		Prepend-Todo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
 	elseif($cmd -eq "append" -or $cmd -eq "app")
 	{
-		Append-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
+		Append-Todo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
 	elseif($cmd -eq "do")
 	{
-		Set-ToDoComplete $args[1..$args.Length]
+		Set-TodoComplete $args[1..$args.Length]
 	}
 	elseif($cmd -eq "archive")
 	{
-		Archive-ToDo
+		Archive-Todo
 	}
 	elseif($cmd -eq "pri" -or $cmd -eq "p")
 	{
@@ -281,8 +281,8 @@ function Move-ToDo {
 			Set-Content $dest ''
 		}
 	
-		$srcList = ParseToDoList $src
-		$destList = ParseToDoList $dest
+		$srcList = ParseTodoList $src
+		$destList = ParseTodoList $dest
 		
 		if($item -le $srcList.Count)
 		{
@@ -337,12 +337,12 @@ function Move-ToDo {
 	}
 }
 
-function Set-ToDoComplete {
+function Set-TodoComplete {
 	param([int[]] $items)
 	
 	if($items)
 	{
-		$list = ParseToDoList
+		$list = ParseTodoList
 		
 		$items | % {
 			if($_ -le $list.Count)
@@ -372,17 +372,17 @@ function Set-ToDoComplete {
 		
 		if($TODOTXT_AUTO_ARCHIVE)
 		{
-			Archive-ToDo
+			Archive-Todo
 		}
 	}
 }
 
-function Archive-ToDo {
+function Archive-Todo {
 
 	## Todo figure out what to do if $DONE_FILE isn't specified
 	if($DONE_FILE)
 	{
-		$list = ParseToDoList
+		$list = ParseTodoList
 		$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 		
 		$completed.ToOutput() | Add-Content $DONE_FILE 
@@ -399,7 +399,7 @@ function Archive-ToDo {
 function Deprioritize-ToDo {
 	param([int[]] $items)
 	
-	$list = ParseToDoList
+	$list = ParseTodoList
 	
 	$items | % {
 		if($_ -le $list.Count)
@@ -420,13 +420,13 @@ function Deprioritize-ToDo {
 	$list.ToOutput() | Set-Content $TODO_FILE
 }
 
-function Set-ToDoPriority {
+function Set-TodoPriority {
 	param([int] $item,
 		[string] $priority)
 
 	if($priority -match "^[A-Z]{1}$")
 	{
-		$list = ParseToDoList
+		$list = ParseTodoList
 		
 		if($item -le $list.Count)
 		{
@@ -447,7 +447,7 @@ function Set-ToDoPriority {
 	## TODO show usage
 }
 
-function Get-ToDo {
+function Get-Todo {
 param(
 		[string[]] $search,
 		[boolean] $includeCompletedTasks = $FALSE,
@@ -456,7 +456,7 @@ param(
 	
 	## TODO Error/warning message for no todo location set
 	
-	$list = ParseToDoList $path $includeCompletedTasks
+	$list = ParseTodoList $path $includeCompletedTasks
 	
 	if($search)
 	{
@@ -476,7 +476,7 @@ param(
 	return ,$result
 }
 
-function Add-ToDo {
+function Add-Todo {
 param(
 	[string[]] $item
 	)
@@ -513,17 +513,17 @@ param(
 	[string] $priority
 	)
 
-	$list = ParseToDoList
+	$list = ParseTodoList
 	,$list.GetPriority($priority) 
 }
 
-function Prepend-ToDo {
+function Prepend-Todo {
 	param(
 		[int] $item,
 		[string] $term
 		)
 
-	$list = ParseToDoList
+	$list = ParseTodoList
 	
 	if($term)
 	{
@@ -540,13 +540,13 @@ function Prepend-ToDo {
 	}
 }
 
-function Append-ToDo {
+function Append-Todo {
 	param(
 		[int] $item,
 		[string] $term
 		)
 
-	$list = ParseToDoList
+	$list = ParseTodoList
 	
 	if($term)
 	{
@@ -563,13 +563,13 @@ function Append-ToDo {
 	}
 }
 
-function Replace-ToDo {
+function Replace-Todo {
 	param(
 		[int] $item,
 		[string] $term
 		)
 		
-	$list = ParseToDoList
+	$list = ParseTodoList
 	
 	if($term)
 	{
@@ -590,13 +590,13 @@ function Replace-ToDo {
 	}
 }
 
-function Remove-ToDo {
+function Remove-Todo {
 param(
 	[int] $item,
 	[string] $term
 	)
 	
-	$list = ParseToDoList
+	$list = ParseTodoList
 	
 	if($item -le $list.Count)
 	{
@@ -662,20 +662,20 @@ param(
 	}
 }
 
-export-modulemember -function Get-ToDo
-export-modulemember -function Add-ToDo
-export-modulemember -function Remove-ToDo
+export-modulemember -function Get-Todo
+export-modulemember -function Add-Todo
+export-modulemember -function Remove-Todo
 export-modulemember -function Get-Context
 export-modulemember -function Get-Project
 export-modulemember -function Get-Priority
-export-modulemember -function Append-ToDo
-export-modulemember -function Prepend-ToDo
-export-modulemember -function Replace-ToDo
-export-modulemember -function Set-ToDoDone
-export-modulemember -function Set-ToDoPriority
-export-modulemember -function Archive-ToDo
-export-modulemember -function Set-ToDoComplete
-export-modulemember -function Deprioritize-ToDo
-export-modulemember -function Move-ToDo
-export-modulemember -function ToDo
-export-modulemember -function ParseToDoList
+#export-modulemember -function Append-Todo
+export-modulemember -function Prepend-Todo
+export-modulemember -function Replace-Todo
+export-modulemember -function Set-TodoDone
+export-modulemember -function Set-TodoPriority
+export-modulemember -function Archive-Todo
+export-modulemember -function Set-TodoComplete
+export-modulemember -function Deprioritize-Todo
+export-modulemember -function Move-Todo
+export-modulemember -function Todo
+export-modulemember -function ParseTodoList
