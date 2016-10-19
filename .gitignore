@@ -1,4 +1,6 @@
 msbuild.log
 target/
-test/
 packages/
+.vs/
+bin
+obj
