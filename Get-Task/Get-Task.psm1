@@ -1,11 +1,11 @@
 #
-# Get_Todo.ps1
+# Get-Task.ps1
 #
 
 Import-Module todotxtlib
 
 function Get-Task {
-[CmdletBinding()]
+[CmdletBinding()]  
 param(
 		[string[]] $search,
 		[switch] $includeCompleted,
@@ -16,7 +16,11 @@ param(
 		throw '$TODO_FILE not set' 
 	}
 	
-	$list = ParseTodoList $path $includeCompleted
+	if($includeCompleted){
+		$list = Get-TaskList $path -includeCompleted
+	} else {
+		$list = Get-TaskList $path
+	}
 	
 	if($search)
 	{
@@ -37,12 +41,16 @@ param(
 }
 
 function Get-TaskList {
+[CmdletBinding()]
 param(
 		[string] $path = $TODO_FILE,
-		[boolean] $includeCompletedTasks = $FALSE
+		[switch] $includeCompleted
 	)
 	
-	if($includeCompletedTasks -and $DONE_FILE -and (Test-Path $DONE_FILE))
+	## TODO includeCompleted is sort of awkward; it might make more sense to take an array of paths
+	## in both of these functions and let the top-level Todo handle specifying DONE_FILE
+
+	if($includeCompleted -and $DONE_FILE -and (Test-Path $DONE_FILE))
 	{
 		$listLocations = @($path, $DONE_FILE)
 	}
