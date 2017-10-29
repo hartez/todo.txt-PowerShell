@@ -1,26 +1,4 @@
-$assemblyPath = ($PSScriptRoot + '\staging\todotxtlib.net.dll')
-$assemblyLoadPath = ($PSScriptRoot + '\lib')
-
-if(!(Test-Path $assemblyLoadPath))
-{
-	New-Item $assemblyLoadPath -ItemType directory
-}
-
-$assemblyLoadPath = $assemblyLoadPath + '\todotxtlib.net.dll'
-
-# Before we try to load up the newest version of the DLL, we need to see if it's already loaded
-# so we'll try to New-Object a task list; if it fails, we'll know it's safe to copy the dll
-
-Try
-{
-	Copy-Item -Path $assemblyPath -Destination $assemblyLoadPath	
-}
-Catch
-{
-	[system.exception]
-}
-
-Add-Type -Path $assemblyLoadPath
+#Requires -Modules Get-Todo
 
 ## Figure out licensing and copyright stuff (including manifest)
 
@@ -239,34 +217,6 @@ param(
     $Host.UI.RawUI.ForegroundColor = $fore
 }
 
-function ParseToDoList {
-param(
-		[string] $path = $TODO_FILE,
-		[boolean] $includeCompletedTasks = $FALSE
-	)
-	
-	if($includeCompletedTasks -and $DONE_FILE -and (Test-Path $DONE_FILE))
-	{
-		$listLocations = @($path, $DONE_FILE)
-	}
-	else
-	{
-		$listLocations = @($path)
-	}
-	
-	$todos = New-Object todotxtlib.net.TaskList
-
-	$results = @(Get-Content $listLocations)
-		
-	for ($i=0; $i -lt $results.Length; $i++)
-	{
-		$todo = New-Object todotxtlib.net.Task($results[$i], ($i + 1))
-		$todos.Add($todo)
-	}
-	
-	return ,$todos
-}
-
 function Move-ToDo {
 	param (
 		[int] $item,
@@ -445,35 +395,6 @@ function Set-TodoPriority {
 	}
 	
 	## TODO show usage
-}
-
-function Get-Todo {
-param(
-		[string[]] $search,
-		[boolean] $includeCompletedTasks = $FALSE,
-		[string] $path = $TODO_FILE
-	)
-	
-	## TODO Error/warning message for no todo location set
-	
-	$list = ParseTodoList $path $includeCompletedTasks
-	
-	if($search)
-	{
-		$search = [String]::Join(" ", $search).Trim() 
-	}
-	
-	if(!$search)
-	{
-		$result = $list
-	}
-	else
-	{
-		## TODO - check for '-' at the beginning of the search term and handle notMatch
-		$result = ($list.Search($search))
-	}
-	
-	return ,$result
 }
 
 function Add-Todo {
@@ -662,7 +583,6 @@ param(
 	}
 }
 
-export-modulemember -function Get-Todo
 export-modulemember -function Add-Todo
 export-modulemember -function Remove-Todo
 export-modulemember -function Get-Context
@@ -678,4 +598,3 @@ export-modulemember -function Set-TodoComplete
 export-modulemember -function Deprioritize-Todo
 export-modulemember -function Move-Todo
 export-modulemember -function Todo
-export-modulemember -function ParseTodoList

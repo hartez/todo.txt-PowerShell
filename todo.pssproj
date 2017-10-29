@@ -26,11 +26,29 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
+    <Compile Include=".gitignore" />
+    <Compile Include=".gitmodules" />
+    <Compile Include="deploy.ps1" />
+    <Compile Include="Get-Todo\Get-Todo.psm1" />
+    <Compile Include="license.txt" />
+    <Compile Include="readme.markdown" />
+    <Compile Include="tests\data.txt" />
+    <Compile Include="tests\Get-Todo.tests.ps1" />
+    <Compile Include="todo.cs" />
+    <Compile Include="todo.ps1xml" />
     <Compile Include="todo.psd1" />
     <Compile Include="todo.psm1" />
-    <Compile Include="todo.tests.ps1" />
+    <Compile Include="todotxtlib\todotxtlib.psm1" />
+    <Compile Include="todo_cfg.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Get-Todo\" />
+    <Folder Include="todotxtlib\" />
+    <Folder Include="tests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="tests\done.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

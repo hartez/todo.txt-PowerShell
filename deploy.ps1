@@ -1,7 +1,7 @@
 param (
     [CmdletBinding()]
-    [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 0, HelpMessage = 'Should the user profile be modified to automatically load Todo Module?')]
 
+    [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 0, HelpMessage = 'Should the user profile be modified to automatically load ToDo Module?')]
     [switch] $ModifyProfile,
 
     [parameter(Mandatory = $false, ValueFromPipeline = $true, Position = 1, HelpMessage = 'Path to install PowerShell Module to')]
@@ -87,7 +87,7 @@ If ($ttlPath -eq $null) {
 		
 	Write-Host "todotxtlib.net assembly not found; retrieving it from NuGet"
 		
-	# Attempt to get the library from nuget
+	# Attempt to get the Razor libraries from nuget
 	$packageDestination = ([string](Get-ScriptDirectory) + "\packages")
 	if(!(Test-Path $packageDestination))
 	{
@@ -97,7 +97,7 @@ If ($ttlPath -eq $null) {
 	$nugetCmd = '$nugetExePath install todotxtlib.net /OutputDirectory $packageDestination'
 	iex "& $nugetCmd"
 		
-	# Now that it's installed, get the path again
+	# Now that it's installed, get the razor path again
 	$ttlPath = Get-ChildItem -Path $ttlSearchPath |
 		Select-Object -First 1 -ExpandProperty FullName
 }
@@ -178,7 +178,7 @@ if ($ModifyProfile)
         [void] $stringBuilder.append([Environment]::NewLine)
         [void] $stringBuilder.append("# Added by todo.txt PowerShell module")
         [void] $stringBuilder.append([Environment]::NewLine)
-        [void] $stringBuilder.append("Import-Module todo")
+        [void] $stringBuilder.append("Import-Module -DisableNameChecking todo")
         [void] $stringBuilder.append([Environment]::NewLine)
         [void] $stringBuilder.append("Set-Variable -Name TODO_FILE -Value '{0}'" -f $TODO_FILE )
         [void] $stringBuilder.append([Environment]::NewLine)
