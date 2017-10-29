@@ -256,7 +256,7 @@ function Move-ToDo {
 
 			if($confirmed)
 			{
-				$task = New-Object todotxtlib.net.Task(($srcList[$item - 1].Raw), ($destList.Count + 1))
+				$task = New-Object todotxtlib.net.Task(($srcList[$item - 1].Raw), ($destList.Count + 1))instag
 			
 				## add it to the destination file
 				$destList.Add($task)
@@ -453,29 +453,6 @@ function Prepend-Todo {
 			$list.PrependToTask($item, $term)
 			$list.ToOutput() | Set-Content $TODO_FILE
 		
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host ("$item " + $list[$item-1].Body)
-			}
-		}
-	}
-}
-
-function Append-Todo {
-	param(
-		[int] $item,
-		[string] $term
-		)
-
-	$list = ParseTodoList
-	
-	if($term)
-	{
-		if($item -le $list.Count)
-		{
-			$list.AppendToTask($item, $term)
-			$list.ToOutput() | Set-Content $TODO_FILE
-			
 			if($TODOTXT_VERBOSE)
 			{
 				Write-Host ("$item " + $list[$item-1].Body)

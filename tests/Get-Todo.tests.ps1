@@ -4,8 +4,6 @@ if(-not ($env:PSModulePath -like "*$projectPath*")){
 	$env:PSModulePath = $env:PSModulePath + ";$projectPath" + '\'
 }
 
-$env:PSModulePath -split ";"
-
 $ThisModule = $MyInvocation.MyCommand.Path -replace '\.tests\.ps1$'
 $ThisModuleName = $ThisModule | Split-Path -Leaf
 Get-Module -Name $ThisModuleName -All | Remove-Module -Force -ErrorAction Ignore

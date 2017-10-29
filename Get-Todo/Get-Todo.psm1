@@ -4,7 +4,7 @@
 
 Import-Module todotxtlib
 
-function Get-Todo {
+function Get-Task {
 [CmdletBinding()]
 param(
 		[string[]] $search,
@@ -36,7 +36,7 @@ param(
 	return $result
 }
 
-function ParseToDoList {
+function Get-TaskList {
 param(
 		[string] $path = $TODO_FILE,
 		[boolean] $includeCompletedTasks = $FALSE
@@ -64,4 +64,5 @@ param(
 	return ,$todos
 }
 
-Export-ModuleMember -Function Get-Todo
+Export-ModuleMember -Function Get-Task
+Export-ModuleMember -Function Get-TaskList
