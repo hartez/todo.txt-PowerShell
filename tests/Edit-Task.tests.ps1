@@ -62,6 +62,29 @@ Describe "Edit-Task" {
 		}
 	}
 
+	Context "replace tests" {
+		
+		BeforeEach {
+			# Set up a throwaway txt data file
+			SetupTempList -Path ".\tests\temp\replacetests.txt"
+		}
+
+		AfterEach {
+			Remove-Item $TODO_FILE
+			Remove-Variable -Name TODO_FILE -Scope Global
+		}
+		
+		It "should replace content of the second task (index implied)" {
+			Edit-Task 2 -Replace "this is what should be on the second line now"
+			Get-Task second | Should Be "this is what should be on the second line now"
+		}
+
+		It "should prepend content to the second task using the Index parameter" {
+			Edit-Task -Index 2 -Replace "this is what should be on the second line now"
+			Get-Task second | Should Be "this is what should be on the second line now"
+		}
+	} 
+
 	## TODO Add tests where Edit-Task takes a path to each context. (They'll fail, right now it assumes $TODO_FILE)
 }
 

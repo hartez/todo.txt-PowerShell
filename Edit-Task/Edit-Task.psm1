@@ -9,8 +9,13 @@ function Edit-Task {
 		[Parameter(Mandatory=$true)]
 		[int] $index,
 		[string] $append,
-		[string] $prepend
+		[string] $prepend,
+		[string] $replace
 	)
+
+	if($replace) {
+		ReplaceTask -Index $index -Value $replace
+	}
 
 	if($append) { 
 		AppendToTask -Index $index -Append $append
@@ -21,7 +26,23 @@ function Edit-Task {
 	}
 }
 
-## TODO Refactor these, everything is pretty much the same except which method on TaskList is called
+function ModifyTask {
+	param(
+		[int] $index,
+		[scriptblock] $modify,
+		[scriptblock] $output
+	)
+
+	$list = Get-TaskList
+		
+	if($index -le $list.Count)
+	{
+		& $modify $list
+		$list.ToOutput() | Set-Content $TODO_FILE
+		& $output $list		
+	}
+	
+}
 
 function AppendToTask {
 	param(
@@ -29,21 +50,19 @@ function AppendToTask {
 		[string] $append
 	)
 
-	$list = Get-TaskList
-	
-	if($append)
-	{
-		if($index -le $list.Count)
-		{
-			$list.AppendToTask($index, $append)
-			$list.ToOutput() | Set-Content $TODO_FILE
-			
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host ("$index " + $list[$index-1].Body)
-			}
-		}
+	if(-not $append) { return }
+
+	$delegate = {
+		param($list)
+		$list.AppendToTask($index, $append)
 	}
+
+	$output = {
+		param($list)
+		Write-Verbose ("$index " + $list[$index-1].Body)
+	}
+
+	ModifyTask $index $delegate $output
 }
 
 function PrependToTask {
@@ -52,21 +71,41 @@ function PrependToTask {
 		[string] $prepend
 	)
 
-	$list = Get-TaskList
-	
-	if($prepend)
-	{
-		if($index -le $list.Count)
-		{
-			$list.PrependToTask($index, $prepend)
-			$list.ToOutput() | Set-Content $TODO_FILE
-		
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host ("$index " + $list[$index-1].Body)
-			}
-		}
+	if(-not $prepend) { return }
+
+	$delegate = {
+		param($list)
+		$list.PrependToTask($index, $prepend)
 	}
+
+	$output = {
+		param($list)
+		Write-Verbose ("$index " + $list[$index-1].Body)
+	}
+
+	ModifyTask $index $delegate $output
+}
+
+function ReplaceTask {
+	param(
+		[int] $item,
+		[string] $value
+	)
+
+	if(-not $value) { return }
+
+	$delegate = {
+		param($list)
+		$list.ReplaceInTask($index, $value)
+	}
+
+	$output = {
+		param($list)
+		Write-Verbose "TODO: Replaced task with:"
+		Write-Verbose ("$index " + $list[$index-1].Body)
+	}
+
+	ModifyTask $index $delegate $output
 }
 
 Export-ModuleMember -Function Edit-Task

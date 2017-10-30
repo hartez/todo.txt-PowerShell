@@ -7,6 +7,12 @@ function LoadConfiguration() {
 
 	## Set up the defaults
 	$script:TODOTXT_VERBOSE = $FALSE
+
+	## TODO Make all the PowerShellish bits use Write-Verbose instead of write-host
+	## then have this variable control whether Todo passes the -Verbose switch to those commands
+	## Once we see what this looks like, we may have to modify/redirect the output from Todo (get rid of Verbose:)
+	## prefixes
+
 	$script:TODOTXT_FORCE = $FALSE
 	$script:TODOTXT_AUTO_ARCHIVE = $FALSE
 	$script:TODOTXT_PRESERVE_LINE_NUMBERS = $FALSE
@@ -436,56 +442,6 @@ param(
 
 	$list = ParseTodoList
 	,$list.GetPriority($priority) 
-}
-
-function Prepend-Todo {
-	param(
-		[int] $item,
-		[string] $term
-		)
-
-	$list = ParseTodoList
-	
-	if($term)
-	{
-		if($item -le $list.Count)
-		{
-			$list.PrependToTask($item, $term)
-			$list.ToOutput() | Set-Content $TODO_FILE
-		
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host ("$item " + $list[$item-1].Body)
-			}
-		}
-	}
-}
-
-function Replace-Todo {
-	param(
-		[int] $item,
-		[string] $term
-		)
-		
-	$list = ParseTodoList
-	
-	if($term)
-	{
-		if($item -le $list.Count)
-		{
-			$oldText = $list[$item-1].Body
-			
-			$list.ReplaceInTask($item, $term)
-			$list.ToOutput() | Set-Content $TODO_FILE
-			
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host "$item $oldText"
-				Write-Host "TODO: Replaced task with:"
-				Write-Host "$item $term"
-			}
-		}
-	}
 }
 
 function Remove-Todo {
