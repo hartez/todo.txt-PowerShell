@@ -376,32 +376,6 @@ function Deprioritize-ToDo {
 	$list.ToOutput() | Set-Content $TODO_FILE
 }
 
-function Set-TodoPriority {
-	param([int] $item,
-		[string] $priority)
-
-	if($priority -match "^[A-Z]{1}$")
-	{
-		$list = ParseTodoList
-		
-		if($item -le $list.Count)
-		{
-    		$list.SetItemPriority($item, $priority)
-			$list.ToOutput() | Set-Content $TODO_FILE
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host ("$item " + $list[$item - 1].Text)
-				Write-Host "TODO: $item prioritized ($priority)."
-			}
-		}
-		else
-		{
-			Write-Host "No task $item."
-		}
-	}
-	
-	## TODO show usage
-}
 
 function Add-Todo {
 param(

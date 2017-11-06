@@ -4,14 +4,31 @@
 
 Import-Module Get-Task
 
+#TODO Edit-Task should support pipeline input of Tasks (instead of just taking an index)
+#TODO Edit-Task should support pipeline input of indexes
+
 function Edit-Task {
 	param(
-		[Parameter(Mandatory=$true)]
+		[Parameter(Mandatory=$true,
+			HelpMessage="Enter the number of the task to edit.",
+			Position = 0)]
+		[Parameter(ParameterSetName='ModifyBody')]
+		[Parameter(ParameterSetName='SetPriority')]
+		[Parameter(ParameterSetName='ClearPriority')]
 		[int] $index,
+		[Parameter(ParameterSetName='ModifyBody')]
 		[string] $append,
+		[Parameter(ParameterSetName='ModifyBody')]
 		[string] $prepend,
-		[string] $replace
+		[Parameter(ParameterSetName='ModifyBody')]
+		[string] $replace,
+		[Parameter(Mandatory=$true, ParameterSetName='SetPriority')]
+		[string] $priority,
+		[Parameter(Mandatory=$true, ParameterSetName='ClearPriority')]
+		[switch] $clearPriority
 	)
+
+	# TODO error output for empty values, invalid priority
 
 	if($replace) {
 		ReplaceTask -Index $index -Value $replace
@@ -24,6 +41,40 @@ function Edit-Task {
 	if($prepend) { 
 		PrependToTask -Index $index -Prepend $prepend
 	}
+
+	if($priority){
+		# Validate $priority regex "^[A-Z]{1}$"
+		SetPriority -Index $index -Priority $priority
+	}
+
+	if($clearPriority) {
+		SetPriority -Index $index -Priority ""
+	}
+}
+
+function SetPriority {
+	param(
+		[int] $index,
+		[string] $priority
+	)
+	
+	$list = Get-TaskList
+		
+	$delegate = {
+		param($list)
+		$list.SetItemPriority($index, $priority)
+		$list.ToOutput() | Set-Content $TODO_FILE
+	}
+	
+	$output = {
+		param($list)
+		Write-Verbose ("$index " + $list[$index - 1].Text)
+		Write-Verbose "TODO: $item prioritized ($priority)."
+	}
+
+	ModifyTask $index $delegate $output
+		
+	## TODO show usage (this comment got imported from todo.psm1, not sure what it meant)
 }
 
 function ModifyTask {
@@ -41,6 +92,10 @@ function ModifyTask {
 		$list.ToOutput() | Set-Content $TODO_FILE
 		& $output $list		
 	}
+	#else
+	#{
+		# Write Error goes here, maybe?
+	#}
 	
 }
 
