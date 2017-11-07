@@ -135,9 +135,6 @@ Describe "Edit-Task" {
 
 	Context "set priority" {
 
-		# TODO test for empty priority
-		# Expect exception for invalid priority (e.g. 1, "AA", etc.)
-
 		BeforeEach {
 			# Set up a throwaway txt data file
 			SetupTempList -Path ".\tests\temp\priorities.txt"
@@ -153,6 +150,22 @@ Describe "Edit-Task" {
 			Get-Task first | Should Be "(A) This is the first line"
 		}
 
+		It "should throw an exception because the priority is invalid (two letters)" {
+			{Edit-Task 1 -Priority "AA"} | Should Throw "invalid"
+		}
+
+		It "should throw an exception because the priority is invalid (number)" {
+			{Edit-Task 1 -Priority "1"} | Should Throw "invalid"
+		}
+
+		It "should throw an exception because the priority is invalid (a space)" {
+			{Edit-Task 1 -Priority " "} | Should Throw "invalid"
+		}
+
+		It "should throw an exception because the priority is invalid (empty string)" {
+			{Edit-Task 1 -Priority ""} | Should Throw "cannot bind"
+		}
+
 		It "should clear the priority from the third task" {
 			Get-Task "priority D" | Should Be "(D) This line has priority D"
 			Edit-Task 3 -ClearPriority
@@ -160,15 +173,15 @@ Describe "Edit-Task" {
 		}
 
 		It "should throw because it's mixing parameter sets (append and set priority)" {
-			{Edit-Task 1 -Append "derp" -Priority "A"} | Should Throw
+			{Edit-Task 1 -Append "derp" -Priority "A"} | Should Throw "parameter set"
 		}
 
 		It "should throw because it's mixing parameter sets (set priority and clear priority)" {
-			{Edit-Task 1 -ClearPriority -Priority "A"} | Should Throw
+			{Edit-Task 1 -ClearPriority -Priority "A"} | Should Throw "parameter set"
 		}
 
 		It "should throw because it's mixing parameter sets (append and clear priority)" {
-			{Edit-Task 1 -ClearPriority -Append "this will fail"} | Should Throw
+			{Edit-Task 1 -ClearPriority -Append "this will fail"} | Should Throw "parameter set"
 		}
 
 	}

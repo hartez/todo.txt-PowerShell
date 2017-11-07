@@ -28,7 +28,7 @@ function Edit-Task {
 		[switch] $clearPriority
 	)
 
-	# TODO error output for empty values, invalid priority
+	# TODO error output for empty values
 
 	if($replace) {
 		ReplaceTask -Index $index -Value $replace
@@ -43,7 +43,12 @@ function Edit-Task {
 	}
 
 	if($priority){
-		# Validate $priority regex "^[A-Z]{1}$"
+
+		if(-not ($priority -match "^[A-Z]{1}$")){
+			throw "Invalid priority; priority must be a single letter from A-Z"
+		}
+
+		# Validate $priority regex 
 		SetPriority -Index $index -Priority $priority
 	}
 
