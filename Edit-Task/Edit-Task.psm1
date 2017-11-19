@@ -4,12 +4,13 @@
 
 Import-Module Get-Task
 
-#TODO Edit-Task should support pipeline input of Tasks (instead of just taking an index)
-#TODO Edit-Task should support pipeline input of indexes
+#TODO Edit-Task should also support pipeline input of Tasks (instead of just taking an index)
+
 
 function Edit-Task {
+	[cmdletbinding()]
 	param(
-		[Parameter(Mandatory=$true,
+		[Parameter(ValueFromPipeline, Mandatory=$true,
 			HelpMessage="Enter the number of the task to edit.",
 			Position = 0)]
 		[Parameter(ParameterSetName='ModifyBody')]
@@ -28,32 +29,36 @@ function Edit-Task {
 		[switch] $clearPriority
 	)
 
-	# TODO error output for empty values
-
-	if($replace) {
-		ReplaceTask -Index $index -Value $replace
+	Begin {
+		if($priority){
+			if(-not ($priority -match "^[A-Z]{1}$")){
+				throw "Invalid priority; priority must be a single letter from A-Z"
+			}
+		}
 	}
 
-	if($append) { 
-		AppendToTask -Index $index -Append $append
-	}
+	Process {
+		# TODO error output for empty values
 
-	if($prepend) { 
-		PrependToTask -Index $index -Prepend $prepend
-	}
-
-	if($priority){
-
-		if(-not ($priority -match "^[A-Z]{1}$")){
-			throw "Invalid priority; priority must be a single letter from A-Z"
+		if($replace) {
+			ReplaceTask -Index $index -Value $replace
 		}
 
-		# Validate $priority regex 
-		SetPriority -Index $index -Priority $priority
-	}
+		if($append) { 
+			AppendToTask -Index $index -Append $append
+		}
 
-	if($clearPriority) {
-		SetPriority -Index $index -Priority ""
+		if($prepend) { 
+			PrependToTask -Index $index -Prepend $prepend
+		}
+
+		if($priority){
+			SetPriority -Index $index -Priority $priority
+		}
+
+		if($clearPriority) {
+			SetPriority -Index $index -Priority ""
+		}
 	}
 }
 

@@ -166,12 +166,6 @@ Describe "Edit-Task" {
 			{Edit-Task 1 -Priority ""} | Should Throw "cannot bind"
 		}
 
-		It "should clear the priority from the third task" {
-			Get-Task "priority D" | Should Be "(D) This line has priority D"
-			Edit-Task 3 -ClearPriority
-			Get-Task "priority D" | Should Be "This line has priority D"
-		}
-
 		It "should throw because it's mixing parameter sets (append and set priority)" {
 			{Edit-Task 1 -Append "derp" -Priority "A"} | Should Throw "parameter set"
 		}
@@ -184,6 +178,33 @@ Describe "Edit-Task" {
 			{Edit-Task 1 -ClearPriority -Append "this will fail"} | Should Throw "parameter set"
 		}
 
+	}
+
+	Context "clear priorities" {
+		BeforeEach {
+			# Set up a throwaway txt data file
+			SetupTempList -Path ".\tests\temp\priorities.txt"
+		}
+
+		It "should clear the priority from the third task" {
+			Get-Task "priority D" | Should Be "(D) This line has priority D"
+			Edit-Task 3 -ClearPriority
+			Get-Task "priority D" | Should Be "This line has priority D"
+		}
+
+		It "should clear the priorities from each task passed in" {
+			
+			Edit-Task 1 -Priority "A"
+			
+			# Tasks 1 and 3 are priority tasks
+			Get-Task "first" | Select-Object -ExpandProperty Priority | Should Be "A"
+			Get-Task "line has" | Select-Object -ExpandProperty Priority | Should Be "D"
+
+			1,3 | Edit-Task -ClearPriority -Verbose
+
+			Get-Task "first" | Select-Object -ExpandProperty Priority | Should Be ""
+			Get-Task "line has" | Select-Object -ExpandProperty Priority | Should Be ""
+		}
 	}
 }
 
