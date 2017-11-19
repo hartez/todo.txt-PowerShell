@@ -8,20 +8,15 @@ function Get-Task {
 [CmdletBinding()]  
 param(
 		[string[]] $search,
-		[switch] $includeCompleted,
-		[string] $path = $TODO_FILE
+		[string[]] $path = @($TODO_FILE)
 	)
 	
 	if(-not $path) {
-		throw '$TODO_FILE not set' 
+		throw 'No task file specified' 
 	}
 	
-	if($includeCompleted){
-		$list = Get-TaskList $path -includeCompleted
-	} else {
-		$list = Get-TaskList $path
-	}
-	
+	$list = Get-TaskList $path
+		
 	if($search)
 	{
 		$search = [String]::Join(" ", $search).Trim() 
@@ -43,22 +38,17 @@ param(
 function Get-TaskList {
 [CmdletBinding()]
 param(
-		[string] $path = $TODO_FILE,
-		[switch] $includeCompleted
+		[string[]] $path = @($TODO_FILE)
 	)
 	
-	## TODO includeCompleted is sort of awkward; it might make more sense to take an array of paths
-	## in both of these functions and let the top-level Todo handle specifying DONE_FILE
+	$listLocations = @()
 
-	if($includeCompleted -and $DONE_FILE -and (Test-Path $DONE_FILE))
-	{
-		$listLocations = @($path, $DONE_FILE)
+	$path | % {
+		if($_ -and (Test-Path $_)) {
+			$listLocations += $_
+		}
 	}
-	else
-	{
-		$listLocations = @($path)
-	}
-	
+
 	$todos = New-Object todotxtlib.net.TaskList
 
 	$results = @(Get-Content $listLocations)

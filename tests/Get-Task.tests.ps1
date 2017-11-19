@@ -42,7 +42,7 @@ Describe "Get-Task" {
 		}
 
 		It "should include completed tasks" {
-			(Get-Task -includeCompleted | Measure-Object).Count | Should Be 4
+			(Get-Task -Path @($TODO_FILE, $DONE_FILE)  | Measure-Object).Count | Should Be 4
 		}
 		
 	}
@@ -54,7 +54,7 @@ Describe "Get-Task" {
 		}
 		
 		It "displays an error that there's no todo file specified" {
-			{Get-Task} | Should Throw '$TODO_FILE not set'
+			{Get-Task} | Should Throw 'No task file specified'
 		}
 	}
 }

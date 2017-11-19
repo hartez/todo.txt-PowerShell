@@ -108,7 +108,7 @@ Describe "Edit-Task" {
 		}
 	}
 
-	## TODO Add tests where Edit-Task takes a path to each context. (They'll fail, right now it assumes $TODO_FILE) (path should be optional parameter with index) 
+	## TODO Add tests where Edit-Task takes a path to each pester Context. (They'll fail, right now it assumes $TODO_FILE) (path should be optional parameter with index) 
 	# This might make the parameter sets ugly; maybe this is what dynamic parameter sets are for?
 
 	
