@@ -3,6 +3,20 @@ EnsureTestEnvironment($MyInvocation.MyCommand.Path)
 
 Describe "Get-Task" {  
 
+	Context "invalid path" {
+		It "should complain that the path does not exist" {
+			{Get-Task -Path "fail.txt"} | Should Throw "Task file fail.txt does not exist"
+		}
+
+		It "should complain that one of the paths does not exist" {
+			{Get-Task -Path @(".\tests\data.txt", "fail.txt")} | Should Throw "Task file fail.txt does not exist"
+		}
+
+		It "should complain that no path was specified" {
+			{Get-Task} | Should Throw "No task file specified"
+		}
+	}
+
 	Context "using data.txt" {
 
 		BeforeEach {

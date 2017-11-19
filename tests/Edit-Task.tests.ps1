@@ -2,9 +2,11 @@
 EnsureTestEnvironment($MyInvocation.MyCommand.Path)
 
 function SetupTempList {
-	param([string] $path)
+	param([string] $path, [switch] $noTodoVariable)
 
-	Set-Variable -Name TODO_FILE -Value $path -Scope Global
+	if(-not $noTodoVariable){
+		Set-Variable -Name TODO_FILE -Value $path -Scope Global
+	}
 
 	$content = @"
 This is the first line
@@ -12,11 +14,27 @@ This is the second line
 (D) This line has priority D
 This is the last line
 "@
-	Set-Content -Path $TODO_FILE -Value $content
+	Set-Content -Path $path -Value $content
 }
 
 Describe "Edit-Task" {
 	
+	Context "invalid path" {
+		It "should complain that the path does not exist" {
+			{Edit-Task -index 2 -Path "fail.txt" -append "nope"} `
+				| Should Throw "Task file fail.txt does not exist"
+		}
+
+		It "should complain that ones of the paths does not exist" {
+			{Edit-Task -index 3 -Path @(".\tests\data.txt", "fail.txt")  -append "nope"} `
+				| Should Throw "Task file fail.txt does not exist"
+		}
+
+		It "should complain that no path was specified" {
+			{Get-Task} | Should Throw "No task file specified"
+		}
+	}
+
 	Context "append tests" {
 		
 		BeforeEach {
@@ -29,7 +47,7 @@ Describe "Edit-Task" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 		
-		It "should append content to the second task (index implied)" {
+		It "should append content to the second task (-index implied)" {
 			Edit-Task 2 -Append "; this is appended"
 			Get-Task second | Should Be "This is the second line; this is appended"
 		}
@@ -37,6 +55,27 @@ Describe "Edit-Task" {
 		It "should append content to the second task using the Index parameter" {
 			Edit-Task -Index 2 -Append "; this is appended"
 			Get-Task second | Should Be "This is the second line; this is appended"
+		}
+	}
+
+	Context "explicit paths tests" {
+		BeforeEach {
+			# Set up a throwaway txt data file
+			SetupTempList -Path ".\tests\temp\explicit.txt" -noTodoVariable
+		}
+
+		AfterEach {
+			Remove-Item -Path ".\tests\temp\explicit.txt"
+		}
+
+		It "should append content to the second task" {
+
+			$x = ".\tests\temp\explicit.txt"
+
+			Write-Host $x
+
+			Edit-Task 2 -Append "; this is appended" -Path $x -Verbose
+			Get-Task second -Path $x | Should Be "This is the second line; this is appended"
 		}
 	}
 

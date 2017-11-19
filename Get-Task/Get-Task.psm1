@@ -10,10 +10,8 @@ param(
 		[string[]] $search,
 		[string[]] $path = @($TODO_FILE)
 	)
-	
-	if(-not $path) {
-		throw 'No task file specified' 
-	}
+
+	ValidatePaths($path)
 	
 	$list = Get-TaskList $path
 		
@@ -60,6 +58,20 @@ param(
 	}
 	
 	return ,$todos
+}
+
+function ValidatePaths {
+	param([string[]] $path)
+
+	if(-not $path) {
+		throw 'No task file specified' 
+	}
+
+	$path | % {
+		if(-not (Test-Path($_))){
+			throw "Task file $_ does not exist"
+		}
+	}
 }
 
 Export-ModuleMember -Function Get-Task
