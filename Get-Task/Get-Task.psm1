@@ -5,27 +5,35 @@
 Import-Module todotxtlib
 
 function Get-Task {
-[CmdletBinding()]  
+[CmdletBinding(DefaultParameterSetName='Filter')]  
 param(
+		[Parameter(ParameterSetName='Filter', Position = 0)]
 		[string[]] $search,
+		[Parameter(ParameterSetName='ByIndex')]
+		[ValidateRange(1, [int32]::MaxValue)]
+		[int] $index,
+		[Parameter(ParameterSetName='Filter')]
+		[Parameter(ParameterSetName='ByIndex')]
 		[string[]] $path = @($TODO_FILE)
 	)
 
 	ValidatePaths($path)
 	
 	$list = Get-TaskList $path
-		
-	if($search)
-	{
-		$search = [String]::Join(" ", $search).Trim() 
-	}
 	
-	if(!$search)
-	{
-		$result = $list
+	if($index) {
+		$result = ($list).GetTask($index)
+		if($result) {
+			return $result
+		} else {
+			throw "Invalid index"
+		}
 	}
-	else
-	{
+
+	if(!$search) {
+		$result = $list
+	} else {
+		$search = [String]::Join(" ", $search).Trim()
 		## TODO - check for '-' at the beginning of the search term and handle notMatch
 		$result = ($list.Search($search))
 	}
