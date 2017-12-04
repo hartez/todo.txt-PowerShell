@@ -31,21 +31,21 @@ Describe "Edit-TaskList" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 		
-		It "should append content to the second task (-index implied)" {
+		It " append content to the second task (-index implied)" {
 			Edit-TaskList 2 -Append "; this is appended"
 			Get-Task second | Should Be "This is the second line; this is appended"
 		}
 
-		It "should append content to the second task using the Index parameter" {
+		It " append content to the second task using the Index parameter" {
 			Edit-TaskList -Index 2 -Append "; this is appended"
 			Get-Task second | Should Be "This is the second line; this is appended"
 		}
 
-		It "should append 'success' to the body of the first task" {
+		It " append 'success' to the body of the first task" {
 			Get-Task first | Edit-Task -Append "success" | Select -ExpandProperty Body | Should Be "This is the first linesuccess"
 		}
 
-		It "should append 'huzzah' to the body of each task" {
+		It " append 'huzzah' to the body of each task" {
 			(Get-Task | Edit-Task -Append "huzzah" | Where-Object {$_.Body -like '*huzzah'} | Measure-Object).Count | Should Be 4
 		} -Verbose
 	}
@@ -60,7 +60,7 @@ Describe "Edit-TaskList" {
 			Remove-Item -Path ".\tests\temp\explicit.txt"
 		}
 
-		It "should append content to the second task" {
+		It "append content to the second task" {
 
 			$x = ".\tests\temp\explicit.txt"
 
@@ -83,21 +83,21 @@ Describe "Edit-TaskList" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 		
-		It "should prepend content to the second task (index implied)" {
+		It "prepend content to the second task (index implied)" {
 			Edit-TaskList 2 -Prepend "this is in front;"
 			Get-Task second | Should Be "this is in front;This is the second line"
 		}
 
-		It "should prepend content to the second task using the Index parameter" {
+		It "prepend content to the second task using the Index parameter" {
 			Edit-TaskList -Index 2 -Prepend "this is in front;"
 			Get-Task second | Should Be "this is in front;This is the second line"
 		}
 
-		It "should prepend 'success' to the body of the first task" {
+		It "prepend 'success' to the body of the first task" {
 			Get-Task first | Edit-Task -Prepend "success" | Select -ExpandProperty Body | Should Be "successThis is the first line"
 		}
 
-		It "should prepend 'huzzah' to the body of each task" {
+		It "prepend 'huzzah' to the body of each task" {
 			(Get-Task | Edit-Task -Prepend "huzzah" | Where-Object {$_.Body -like 'huzzah*'} | Measure-Object).Count | Should Be 4
 		}
 	}
@@ -114,21 +114,21 @@ Describe "Edit-TaskList" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 		
-		It "should replace content of the second task (index implied)" {
+		It "replace content of the second task (index implied)" {
 			Edit-TaskList 2 -Replace "this is what should be on the second line now"
 			Get-Task second | Should Be "this is what should be on the second line now"
 		}
 
-		It "should prepend content to the second task using the Index parameter" {
+		It "prepend content to the second task using the Index parameter" {
 			Edit-TaskList -Index 2 -Replace "this is what should be on the second line now"
 			Get-Task second | Should Be "this is what should be on the second line now"
 		}
 
-		It "should replace the body of the first task with 'success'" {
+		It "replace the body of the first task with 'success'" {
 			Get-Task first | Edit-Task -Replace "success" | Select -ExpandProperty Body | Should Be "success"
 		}
 
-		It "should replace the body of each task with 'huzzah'" {
+		It "replace the body of each task with 'huzzah'" {
 			(Get-Task | Edit-Task -Replace "huzzah" | Where-Object {$_.Body -eq 'huzzah'} | Measure-Object).Count | Should Be 4
 		}
 	} 
@@ -144,12 +144,12 @@ Describe "Edit-TaskList" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 
-		It "should append and prepend content to the second task using the Index parameter" {
+		It "append and prepend content to the second task using the Index parameter" {
 			Edit-TaskList -Index 2 -Append "end" -Prepend "begin"
 			Get-Task second | Should Be "beginThis is the second lineend"
 		}
 
-		It "should replace then prepend/append content in the second task" {
+		It "replace then prepend/append content in the second task" {
 			Edit-TaskList -Index 2 -Replace "second task" -Append " end" -Prepend "begin "
 			Get-Task second | Should Be "begin second task end"
 		}
@@ -173,7 +173,7 @@ Describe "Edit-TaskList" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 
-		It "should do nothing because this is an invalid item number" {
+		It "do nothing because this is an invalid item number" {
 			Edit-TaskList 10 -Priority "A"
 		}
 	}
@@ -190,36 +190,36 @@ Describe "Edit-TaskList" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 
-		It "should set the first task's priority to A" {
+		It "set the first task's priority to A" {
 			Edit-TaskList 1 -Priority "A"
 			Get-Task first | Should Be "(A) This is the first line"
 		}
 
-		It "should throw an exception because the priority is invalid (two letters)" {
+		It "throws because the priority is invalid (two letters)" {
 			{Edit-TaskList 1 -Priority "AA"} | Should Throw "invalid"
 		}
 
-		It "should throw an exception because the priority is invalid (number)" {
+		It "throws because the priority is invalid (number)" {
 			{Edit-TaskList 1 -Priority "1"} | Should Throw "invalid"
 		}
 
-		It "should throw an exception because the priority is invalid (a space)" {
+		It "throws because the priority is invalid (a space)" {
 			{Edit-TaskList 1 -Priority " "} | Should Throw "invalid"
 		}
 
-		It "should throw an exception because the priority is invalid (empty string)" {
+		It "throws because the priority is invalid (empty string)" {
 			{Edit-TaskList 1 -Priority ""} | Should Throw "cannot bind"
 		}
 
-		It "should throw because it's mixing parameter sets (append and set priority)" {
+		It "throws because it's mixing parameter sets (append and set priority)" {
 			{Edit-TaskList 1 -Append "derp" -Priority "A"} | Should Throw "parameter set"
 		}
 
-		It "should throw because it's mixing parameter sets (set priority and clear priority)" {
+		It "throws because it's mixing parameter sets (set priority and clear priority)" {
 			{Edit-TaskList 1 -ClearPriority -Priority "A"} | Should Throw "parameter set"
 		}
 
-		It "should throw because it's mixing parameter sets (append and clear priority)" {
+		It "throws because it's mixing parameter sets (append and clear priority)" {
 			{Edit-TaskList 1 -ClearPriority -Append "this will fail"} | Should Throw "parameter set"
 		}
 
@@ -232,13 +232,13 @@ Describe "Edit-TaskList" {
 			SetupTempList -Path ".\tests\temp\priorities.txt"
 		}
 
-		It "should clear the priority from the third task" {
+		It "clear the priority from the third task" {
 			Get-Task "priority D" | Should Be "(D) This line has priority D"
 			Edit-TaskList 3 -ClearPriority
 			Get-Task "priority D" | Should Be "This line has priority D"
 		}
 
-		It "should clear the priorities from each task passed in" {
+		It "clear the priorities from each task passed in" {
 			
 			Edit-TaskList 1 -Priority "A"
 			

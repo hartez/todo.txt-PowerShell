@@ -4,15 +4,15 @@ EnsureTestEnvironment($MyInvocation.MyCommand.Path)
 Describe "Get-Task" {  
 
 	Context "invalid path" {
-		It "should complain that the path does not exist" {
+		It "throw because the path does not exist" {
 			{Get-Task -Path "fail.txt"} | Should Throw "Task file fail.txt does not exist"
 		}
 
-		It "should complain that one of the paths does not exist" {
+		It "throw because one of the paths does not exist" {
 			{Get-Task -Path @(".\tests\data.txt", "fail.txt")} | Should Throw "Task file fail.txt does not exist"
 		}
 
-		It "should complain that no path was specified" {
+		It "throw because no path was specified" {
 			{Get-Task} | Should Throw "No task file specified"
 		}
 	}
@@ -27,17 +27,17 @@ Describe "Get-Task" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 		
-		It "should return three tasks" {
+		It "return three tasks" {
 			(Get-Task | Measure-Object).Count | Should Be 3 
 		}
 
 		# TODO Change -Search -> -Include
 
-		It "should return the second task (-search)" {
+		It "return the second task (-search)" {
 			Get-Task second | Should Be "This is the second line"
 		}
 
-		It "should return the third task (-search array)" {
+		It "return the third task (-search array)" {
 			Get-Task -search @("the", "last") | Should Be "This is the last line"
 		}
 			
@@ -55,7 +55,7 @@ Describe "Get-Task" {
 			Remove-Variable -Name DONE_FILE -Scope Global
 		}
 
-		It "should include completed tasks" {
+		It "return current and completed tasks from the done file" {
 			(Get-Task -Path @($TODO_FILE, $DONE_FILE)  | Measure-Object).Count | Should Be 4
 		}
 		
