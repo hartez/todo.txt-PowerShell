@@ -7,13 +7,7 @@ Import-Module todotxtlib
 function Get-Task {
 [CmdletBinding(DefaultParameterSetName='Filter')]  
 param(
-		[Parameter(ParameterSetName='Filter', Position = 0)]
 		[string[]] $search,
-		[Parameter(ParameterSetName='ByIndex')]
-		[ValidateRange(1, [int32]::MaxValue)]
-		[int] $index,
-		[Parameter(ParameterSetName='Filter')]
-		[Parameter(ParameterSetName='ByIndex')]
 		[string[]] $path = @($TODO_FILE)
 	)
 

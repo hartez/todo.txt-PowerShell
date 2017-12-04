@@ -71,33 +71,6 @@ Describe "Get-Task" {
 			{Get-Task} | Should Throw 'No task file specified'
 		}
 	}
-
-	Context "get task with index" {
-		
-		BeforeEach {
-			Set-Variable -Name TODO_FILE -Value ".\tests\data.txt" -Scope Global
-		}
-
-		AfterEach {
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
-
-		It "should return the first task" {
-			Get-Task -Index 1 | Should Be "This is the first line"
-		}
-
-		It "should return the third task" {
-			Get-Task -Index 3 | Should Be "This is the last line"
-		}
-
-		It "should fail with 'invalid index' (too high)" {
-			{Get-Task -Index 4} | Should Throw "Invalid index"
-		}
-
-		It "should fail with 'invalid index' (too low)" {
-			{Get-Task -Index 0} | Should Throw 
-		}
-	}
 }
 
 Describe "Get-TaskList" {
