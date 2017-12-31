@@ -77,15 +77,13 @@ param()
     }
 	elseif($cmd -eq "listall" -or $cmd -eq "lsa")
     {
-		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]; includeCompletedTasks=$TRUE}
-		
-		Format-Priority((Get-ToDo @todoArgs)) 
+		Format-Priority(Get-Task -Path @($TODO_FILE, $DONE_FILE)) 
     }
 	elseif($cmd -eq "listfile" -or $cmd -eq "lf")
     {
 		$todoArgs = @{path=$args[1]; search=$args[2..$args.Length]}
 	
-		Format-Priority((Get-ToDo @todoArgs))
+		Format-Priority((Get-Task @todoArgs))
     }
 	elseif($cmd -eq "add" -or $cmd -eq "a")
 	{

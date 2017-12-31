@@ -51,4 +51,38 @@ Describe "Todo shell Facade" {
 		}
 
 	}
+
+	Context "facade listall" {
+
+		BeforeEach {
+			Set-Variable -Name TODO_FILE -Value ".\tests\data.txt" -Scope Global
+			Set-Variable -Name DONE_FILE -Value ".\tests\done.txt" -Scope Global
+		}
+
+		AfterEach {
+			Remove-Variable -Name TODO_FILE -Scope Global
+			Remove-Variable -Name DONE_FILE -Scope Global
+		}
+
+		It "should list tasks with the 'list' command aliases" -TestCases @( 
+			@{ cmd = 'listall' }
+			@{ cmd = 'lsa'; }
+		) {
+			param($cmd)
+			((Todo $cmd) | Measure-Object).Count | Should Be 4 
+			Assert-MockCalled -Scope It -ModuleName Facade -CommandName Format-Priority -Exactly 1
+		}
+	}
+
+	Context "facade listfile" {
+
+		It "should list tasks with the 'list' command aliases" -TestCases @( 
+			@{ cmd = 'listfile' }
+			@{ cmd = 'lf'; }
+		) {
+			param($cmd)
+			((Todo $cmd ".\tests\data.txt") | Measure-Object).Count | Should Be 3 
+			Assert-MockCalled -Scope It -ModuleName Facade -CommandName Format-Priority -Exactly 1
+		}
+	}
 }
