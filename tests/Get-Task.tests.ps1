@@ -56,7 +56,7 @@ Describe "Get-Task" {
 		}
 
 		It "return current and completed tasks from the done file" {
-			(Get-Task -Path @($TODO_FILE, $DONE_FILE)  | Measure-Object).Count | Should Be 4
+			(Get-Task -Path @($TODO_FILE, $DONE_FILE) | Measure-Object).Count | Should Be 4
 		}
 		
 	}

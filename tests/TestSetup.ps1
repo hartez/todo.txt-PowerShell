@@ -7,8 +7,6 @@ function EnsureTestEnvironment {
 		[string] $path
 	)
 
-	Write-Host "ete path: $path"
-
 	$projectPath = $path | Split-Path | Split-Path
 
 	pushd($projectPath)
@@ -19,6 +17,7 @@ function EnsureTestEnvironment {
 
 	$ThisModule = $path -replace '\.tests\.ps1$'
 	$ThisModuleName = $ThisModule | Split-Path -Leaf
+
 	Get-Module -Name $ThisModuleName -All | Remove-Module -Force -ErrorAction Ignore
 	Import-Module -Name "$ThisModuleName" -Force -ErrorAction Stop
 }

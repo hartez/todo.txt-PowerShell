@@ -31,11 +31,13 @@
     <Compile Include=".gitmodules" />
     <Compile Include="Edit-Task\Edit-Task.psm1" />
     <Compile Include="deploy.ps1" />
+    <Compile Include="Facade\Facade.psm1" />
     <Compile Include="Get-Task\Get-Task.psm1" />
     <Compile Include="license.txt" />
     <Compile Include="readme.markdown" />
     <Compile Include="tests\Edit-Task.tests.ps1" />
     <Compile Include="tests\data.txt" />
+    <Compile Include="tests\Facade.tests.ps1" />
     <Compile Include="tests\Get-Task.tests.ps1" />
     <Compile Include="tests\TestSetup.ps1" />
     <Compile Include="todo.cs" />
@@ -48,6 +50,7 @@
   <ItemGroup>
     <Folder Include="Get-Task\" />
     <Folder Include="Edit-Task\" />
+    <Folder Include="Facade\" />
     <Folder Include="tests\temp\" />
     <Folder Include="todotxtlib\" />
     <Folder Include="tests\" />
