@@ -41,9 +41,13 @@ Describe "Todo shell Facade" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 
-		It "should list tasks with the 'list' command" {
-			((Todo list) | Measure-Object).Count | Should Be 3 
-			Assert-MockCalled -ModuleName Facade -CommandName Format-Priority -Exactly 1
+		It "should list tasks with the 'list' command aliases" -TestCases @( 
+			@{ cmd = 'list' }
+			@{ cmd = 'ls'; }
+		) {
+			param($cmd)
+			((Todo $cmd) | Measure-Object).Count | Should Be 3 
+			Assert-MockCalled -Scope It -ModuleName Facade -CommandName Format-Priority -Exactly 1
 		}
 
 	}
