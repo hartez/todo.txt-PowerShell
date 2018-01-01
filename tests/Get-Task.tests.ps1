@@ -27,8 +27,8 @@ Describe "Get-Task" {
 			Remove-Variable -Name TODO_FILE -Scope Global
 		}
 		
-		It "return three tasks" {
-			(Get-Task | Measure-Object).Count | Should Be 3 
+		It "return all tasks in the file" {
+			(Get-Task | Measure-Object).Count | Should Be 6 
 		}
 
 		# TODO Change -Search -> -Include
@@ -40,7 +40,11 @@ Describe "Get-Task" {
 		It "return the third task (-search array)" {
 			Get-Task -search @("the", "last") | Should Be "This is the last line"
 		}
-			
+		
+		It "returns tasks filtered by Priority" {
+			(Get-Task -Priority A | Measure-Object).Count | Should Be 1
+			(Get-Task -Priority D | Measure-Object).Count | Should Be 2
+		}	
 	} 
 
 	Context "including completed tasks" {
@@ -56,7 +60,7 @@ Describe "Get-Task" {
 		}
 
 		It "return current and completed tasks from the done file" {
-			(Get-Task -Path @($TODO_FILE, $DONE_FILE) | Measure-Object).Count | Should Be 4
+			(Get-Task -Path @($TODO_FILE, $DONE_FILE) | Measure-Object).Count | Should Be 7
 		}
 		
 	}
@@ -84,7 +88,7 @@ Describe "Get-TaskList" {
 		}
 
 		It "gets a task list from the specified file" {
-			(Get-TaskList -Path ".\tests\data.txt").Count | Should Be 3
+			(Get-TaskList -Path ".\tests\data.txt").Count | Should Be 6
 		}
 	}
 }

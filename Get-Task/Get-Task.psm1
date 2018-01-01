@@ -8,20 +8,16 @@ function Get-Task {
 [CmdletBinding(DefaultParameterSetName='Filter')]  
 param(
 		[string[]] $search,
-		[string[]] $path = @($TODO_FILE)
+		[string[]] $path = @($TODO_FILE),
+		[string] $priority
 	)
 
 	ValidatePaths($path)
 	
 	$list = Get-TaskList $path
 	
-	if($index) {
-		$result = ($list).GetTask($index)
-		if($result) {
-			return $result
-		} else {
-			throw "Invalid index"
-		}
+	if($priority){
+		$list = $list.GetPriority($priority)
 	}
 
 	if(!$search) {

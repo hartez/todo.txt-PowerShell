@@ -111,7 +111,7 @@ param()
 	}
 	elseif($cmd -eq "listpri" -or $cmd -eq "lsp")
 	{
-		Format-Priority((Get-Priority $args[1]))
+		Format-Priority((Get-Task -Priority $args[1]))
 	}	
 	elseif($cmd -eq "replace")
 	{
