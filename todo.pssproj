@@ -32,6 +32,8 @@
     <Compile Include="Edit-Task\Edit-Task.psm1" />
     <Compile Include="deploy.ps1" />
     <Compile Include="Facade\Facade.psm1" />
+    <Compile Include="Get-Context\Get-Context.psm1" />
+    <Compile Include="Get-Project\Get-Project.psm1" />
     <Compile Include="Get-Task\Get-Task.psm1" />
     <Compile Include="license.txt" />
     <Compile Include="readme.markdown" />
@@ -51,6 +53,8 @@
     <Folder Include="Get-Task\" />
     <Folder Include="Edit-Task\" />
     <Folder Include="Facade\" />
+    <Folder Include="Get-Project\" />
+    <Folder Include="Get-Context\" />
     <Folder Include="tests\temp\" />
     <Folder Include="todotxtlib\" />
     <Folder Include="tests\" />

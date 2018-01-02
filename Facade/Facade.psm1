@@ -1,5 +1,7 @@
 Write-Host "Facade module"
 Import-Module Edit-Task
+Import-Module Get-Context
+Import-Module Get-Project
 
 <# 
 .Synopsis

@@ -147,11 +147,11 @@ Describe "Todo shell Facade" {
 
 		It "should list projects with the 'listproj' command aliases" -TestCases @( 
 			@{ cmd = 'listproj' }
-			@{ cmd = 'lsproj'; }
+			@{ cmd = 'lsprj'; }
 		) {
 			param($cmd)
 
-			((Todo $cmd) | Measure-Object).Count | Should Be 3 
+			((Todo $cmd) | Measure-Object).Count | Should Be 2 
 		}
 	}
 
