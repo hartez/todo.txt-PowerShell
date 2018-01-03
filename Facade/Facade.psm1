@@ -125,7 +125,7 @@ param()
 	}
 	elseif($cmd -eq "append" -or $cmd -eq "app")
 	{
-		Append-Todo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
+		Edit-TaskList $args[1] -Append ([String]::Join(" ", $args[2..$args.Length]))
 	}
 	elseif($cmd -eq "do")
 	{

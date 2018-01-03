@@ -201,12 +201,33 @@ Describe "Todo shell Facade" {
 		}
 	}
 	
+	Context "facade append to task" {
+
+		BeforeEach {
+			# Set up a throwaway txt data file
+			SetupTempList -Path ".\tests\temp\facade_append_tests.txt"
+		}
+
+		AfterEach {
+			Remove-Item $TODO_FILE
+			Remove-Variable -Name TODO_FILE -Scope Global
+		}
+
+		It "should append to task with 'append' command aliases" -TestCases @( 
+			@{ cmd = 'append' }
+			@{ cmd = 'app'; }
+		) {
+			param($cmd)
+			
+			Todo $cmd 2 " some text" 
+			Todo list "the second line" | Should Be "(A) This is the second line +project1 @context1 some text"
+		}
+	}
+
 	# addm
-	
-	
 	# replace
 	# prepend
-	# append
+	
 	# do
 	# archive
 	# pri
