@@ -17,19 +17,18 @@ This is the last line
 	Set-Content -Path $path -Value $content
 }
 
+function RemoveTempList {
+	Remove-Item $TODO_FILE
+	Remove-Variable -Name TODO_FILE -Scope Global
+}
+
 Describe "Edit-TaskList" {
 	
 	Context "append tests" {
 		
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\appendtests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\appendtests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 		
 		It " append content to the second task (-index implied)" {
 			Edit-TaskList 2 -Append "; this is appended"
@@ -51,14 +50,10 @@ Describe "Edit-TaskList" {
 	}
 
 	Context "explicit paths tests" {
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\explicit.txt" -noTodoVariable
-		}
 
-		AfterEach {
-			Remove-Item -Path ".\tests\temp\explicit.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\explicit.txt" -noTodoVariable }
+
+		AfterEach { Remove-Item -Path ".\tests\temp\explicit.txt" }
 
 		It "append content to the second task" {
 
@@ -73,15 +68,9 @@ Describe "Edit-TaskList" {
 
 	Context "prepend tests" {
 		
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\prependtests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\prependtests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 		
 		It "prepend content to the second task (index implied)" {
 			Edit-TaskList 2 -Prepend "this is in front;"
@@ -104,15 +93,9 @@ Describe "Edit-TaskList" {
 
 	Context "replace tests" {
 		
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\replacetests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\replacetests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 		
 		It "replace content of the second task (index implied)" {
 			Edit-TaskList 2 -Replace "this is what should be on the second line now"
@@ -134,15 +117,10 @@ Describe "Edit-TaskList" {
 	} 
 
 	Context "mixed append/prepend/replace tests" {
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\mixedtests.txt"
-		}
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\mixedtests.txt" }
+
+		AfterEach { RemoveTempList }
 
 		It "append and prepend content to the second task using the Index parameter" {
 			Edit-TaskList -Index 2 -Append "end" -Prepend "begin"
@@ -163,15 +141,9 @@ Describe "Edit-TaskList" {
 		## TODO Test that passing in an invalid item number writes to verbose output but doesn't fail (eventually we'll want to think about that)
 		# So we need to hook into Write-Verbose here
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\invaliditemnumbers.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\invaliditemnumbers.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "do nothing because this is an invalid item number" {
 			Edit-TaskList 10 -Priority "A"
@@ -180,15 +152,9 @@ Describe "Edit-TaskList" {
 
 	Context "set priority" {
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\priorities.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\priorities.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "set the first task's priority to A" {
 			Edit-TaskList 1 -Priority "A"
