@@ -91,6 +91,7 @@ Describe "Todo shell Facade" {
 			SetupTempList -Path ".\tests\temp\facade_add_tests.txt"
 		}
 
+		# TODO make aftereach terse like you did in the edit-task tests
 		AfterEach {
 			Remove-Item $TODO_FILE
 			Remove-Variable -Name TODO_FILE -Scope Global
@@ -108,6 +109,8 @@ Describe "Todo shell Facade" {
 			((Todo list) | Measure-Object).Count | Should Be 5 
 			Get-Task $content | Should Be $content
 		}
+
+		# TODO Add some tests to set up Verbose for this to make sure the messages are showing up
 	}
 
 	Context "facade rm" {

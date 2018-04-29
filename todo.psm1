@@ -159,21 +159,21 @@ function Deprioritize-ToDo {
 
 function Add-Todo {
 param(
-	[string[]] $item
+	[string[]] $item # Facade should do the 'join' magic, PS version just takes a quoted string
 	)
 	
 	$item = ([String]::Join(" ", $item)).Trim()
 
-	if($TODOTXT_DATE_ON_ADD)
+	if($TODOTXT_DATE_ON_ADD) # Should be a switch -Date, this variable from Facade will set it
 	{
 		$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
 	}
 	
 	Add-Content $TODO_FILE ($item)
 	
-	if($TODOTXT_VERBOSE)
+	if($TODOTXT_VERBOSE) # Should be Write-Verbose, this variable from Facade will switch it
 	{
-		$taskNum = (Get-Content $TODO_FILE | Measure-Object).Count
+		$taskNum = (Get-Content $TODO_FILE | Measure-Object).Count #TODO_FILE -> #Path
 		Write-Host "$taskNum $item"
 		Write-Host "$taskNum added."
 	}

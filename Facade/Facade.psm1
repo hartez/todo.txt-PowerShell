@@ -1,4 +1,5 @@
 Write-Host "Facade module"
+Import-Module Add-Task
 Import-Module Edit-Task
 Import-Module Get-Context
 Import-Module Get-Project
@@ -89,7 +90,9 @@ param()
     }
 	elseif($cmd -eq "add" -or $cmd -eq "a")
 	{
-		Add-Todo $args[1..$args.Length]
+		$todo = ([String]::Join(" ", $args[1..$args.Length])).Trim()
+
+		Add-Task $todo -Path $TODO_FILE -PrefixDate:$TODOTXT_DATE_ON_ADD -Verbose:$TODOTXT_VERBOSE
 	}
 	elseif($cmd -eq "addm")
 	{
