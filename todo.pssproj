@@ -39,6 +39,7 @@
     <Compile Include="Helpers\Helpers.psm1" />
     <Compile Include="license.txt" />
     <Compile Include="readme.markdown" />
+    <Compile Include="tests\Add-Task.tests.ps1" />
     <Compile Include="tests\Edit-Task.tests.ps1" />
     <Compile Include="tests\data.txt" />
     <Compile Include="tests\Facade.tests.ps1" />

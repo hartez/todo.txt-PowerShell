@@ -60,3 +60,28 @@ function RemoveTempList {
 
 	CleanTODOVariables
 }
+
+$global:verboseOutput = @()
+
+function Assert-VerboseOutput {
+	param([string[]] $lines)
+
+	$expectedLength = $lines.Length
+	$actualLength = $global:verboseOutput.Length 
+
+	if($actualLength -ne $expectedLength) {
+		throw "Verbose output length $actualLength does not match expected length of $expectedLength"
+	}
+
+	$lines | % {$i = 0} {
+
+		$expected = $lines[$i]
+		$actual = $global:verboseOutput[$i]
+
+		if($expected -cne $actual) {
+			throw "Verbose output of '$actual' does not match expected output of '$expected'"
+		}
+
+		$i++
+	}
+}
