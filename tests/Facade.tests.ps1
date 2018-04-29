@@ -31,13 +31,9 @@ Describe "Todo shell Facade" {
 
 	Context "facade list" {
 	
-		BeforeEach {
-			Set-Variable -Name TODO_FILE -Value ".\tests\data.txt" -Scope Global
-		}
+		BeforeEach { SetTODOVariables ".\tests\data.txt" }
 	
-		AfterEach {
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { CleanTODOVariables }
 
 		It "should list tasks with the 'list' command aliases" -TestCases @( 
 			@{ cmd = 'list' }
@@ -52,15 +48,9 @@ Describe "Todo shell Facade" {
 
 	Context "facade listall" {
 
-		BeforeEach {
-			Set-Variable -Name TODO_FILE -Value ".\tests\data.txt" -Scope Global
-			Set-Variable -Name DONE_FILE -Value ".\tests\done.txt" -Scope Global
-		}
+		BeforeEach { SetTODOVariables ".\tests\data.txt" ".\tests\done.txt" }
 
-		AfterEach {
-			Remove-Variable -Name TODO_FILE -Scope Global
-			Remove-Variable -Name DONE_FILE -Scope Global
-		}
+		AfterEach { CleanTODOVariables }
 
 		It "should list tasks with the 'list' command aliases" -TestCases @( 
 			@{ cmd = 'listall' }
@@ -86,16 +76,9 @@ Describe "Todo shell Facade" {
 
 	Context "facade add" {
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\facade_add_tests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\facade_add_tests.txt" }
 
-		# TODO make aftereach terse like you did in the edit-task tests
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "should add a task with the 'add' command aliases" -TestCases @( 
 			@{ cmd = 'add' }
@@ -115,15 +98,9 @@ Describe "Todo shell Facade" {
 
 	Context "facade rm" {
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\facade_rm_tests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\facade_rm_tests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "should remove a task with the 'rm' command aliases" -TestCases @( 
 			@{ cmd = 'rm' }
@@ -138,15 +115,9 @@ Describe "Todo shell Facade" {
 
 	Context "facade list projects" {
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\facade_listproj_tests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\facade_listproj_tests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "should list projects with the 'listproj' command aliases" -TestCases @( 
 			@{ cmd = 'listproj' }
@@ -160,15 +131,9 @@ Describe "Todo shell Facade" {
 
 	Context "facade list contexts" {
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\facade_listcon_tests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\facade_listcon_tests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "should list contexts with the 'listcon' command aliases" -TestCases @( 
 			@{ cmd = 'listcon' }
@@ -182,15 +147,9 @@ Describe "Todo shell Facade" {
 
 	Context "facade list priority tasks" {
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\facade_listpri_tests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\facade_listpri_tests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "should list tasks with priorities 'listpri' command aliases" -TestCases @( 
 			@{ cmd = 'listpri' }
@@ -206,15 +165,9 @@ Describe "Todo shell Facade" {
 	
 	Context "facade append to task" {
 
-		BeforeEach {
-			# Set up a throwaway txt data file
-			SetupTempList -Path ".\tests\temp\facade_append_tests.txt"
-		}
+		BeforeEach { SetupTempList -Path ".\tests\temp\facade_append_tests.txt" }
 
-		AfterEach {
-			Remove-Item $TODO_FILE
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { RemoveTempList }
 
 		It "should append to task with 'append' command aliases" -TestCases @( 
 			@{ cmd = 'append' }

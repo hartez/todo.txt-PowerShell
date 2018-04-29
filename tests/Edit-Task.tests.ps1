@@ -17,11 +17,6 @@ This is the last line
 	Set-Content -Path $path -Value $content
 }
 
-function RemoveTempList {
-	Remove-Item $TODO_FILE
-	Remove-Variable -Name TODO_FILE -Scope Global
-}
-
 Describe "Edit-TaskList" {
 	
 	Context "append tests" {

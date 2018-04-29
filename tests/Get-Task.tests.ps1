@@ -19,13 +19,9 @@ Describe "Get-Task" {
 
 	Context "using data.txt" {
 
-		BeforeEach {
-			Set-Variable -Name TODO_FILE -Value ".\tests\data.txt" -Scope Global
-		}
+		BeforeEach { SetTODOVariables ".\tests\data.txt" }
 
-		AfterEach {
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		AfterEach { CleanTODOVariables }
 		
 		It "return all tasks in the file" {
 			(Get-Task | Measure-Object).Count | Should Be 6 
@@ -49,15 +45,9 @@ Describe "Get-Task" {
 
 	Context "including completed tasks" {
 
-		BeforeEach {
-			Set-Variable -Name TODO_FILE -Value ".\tests\data.txt" -Scope Global
-			Set-Variable -Name DONE_FILE -Value ".\tests\done.txt" -Scope Global
-		}
+		BeforeEach { SetTODOVariables ".\tests\data.txt" ".\tests\done.txt" }
 
-		AfterEach {
-			Remove-Variable -Name TODO_FILE -Scope Global
-			Remove-Variable -Name DONE_FILE -Scope Global
-		}
+		AfterEach { CleanTODOVariables }
 
 		It "return current and completed tasks from the done file" {
 			(Get-Task -Path @($TODO_FILE, $DONE_FILE) | Measure-Object).Count | Should Be 7
@@ -67,9 +57,7 @@ Describe "Get-Task" {
 
 	Context "no todo file" {
 		
-		if(Test-Path variable:global:TODO_FILE) {
-			Remove-Variable -Name TODO_FILE -Scope Global
-		}
+		CleanTODOVariables
 		
 		It "displays an error that there's no todo file specified" {
 			{Get-Task} | Should Throw 'No task file specified'
@@ -81,11 +69,7 @@ Describe "Get-TaskList" {
 
 	Context "specify path" {
 	
-		BeforeEach {
-			if(Test-Path variable:global:TODO_FILE) {
-				Remove-Variable -Name TODO_FILE -Scope Global
-			}
-		}
+		BeforeEach { CleanTODOVariables }
 
 		It "gets a task list from the specified file" {
 			(Get-TaskList -Path ".\tests\data.txt").Count | Should Be 6
