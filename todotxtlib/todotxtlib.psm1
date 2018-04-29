@@ -24,3 +24,4 @@ Catch
 }
 
 Add-Type -Path $assemblyLoadPath
+

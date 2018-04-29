@@ -3,10 +3,12 @@
 #
 
 Import-Module todotxtlib
+Import-Module Helpers
 
 ## TODO Add pipeline tests 
 ## TODO Test with and without prefixdate
 ## TODO Test missing paths
+## TODO Test bad paths
 ## TODO Test verbose
 
 function Add-Task {
@@ -18,7 +20,9 @@ function Add-Task {
 		[switch] $PrefixDate
 	)
 
-	Begin{}
+	Begin {
+		ValidatePaths($path) 
+	}
 
 	Process {
 		

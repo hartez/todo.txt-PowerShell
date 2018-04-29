@@ -76,9 +76,16 @@ Describe "Todo shell Facade" {
 
 	Context "facade add" {
 
+		Mock -ModuleName Add-Task Get-Date { return "1997-04-20" } -ParameterFilter {$format -match "yyyy-MM-dd"}
+
 		BeforeEach { SetupTempList -Path ".\tests\temp\facade_add_tests.txt" }
 
-		AfterEach { RemoveTempList }
+		AfterEach { 
+			RemoveTempList 
+			if(Test-Path variable:global:TODOTXT_DATE_ON_ADD) {
+				Remove-Variable -Name TODOTXT_DATE_ON_ADD -Scope Global
+			}
+		}
 
 		It "should add a task with the 'add' command aliases" -TestCases @( 
 			@{ cmd = 'add' }
@@ -91,6 +98,21 @@ Describe "Todo shell Facade" {
 			Todo $cmd $content
 			((Todo list) | Measure-Object).Count | Should Be 5 
 			Get-Task $content | Should Be $content
+		}
+
+		It "should add a task with the date prefixed using the 'add' command aliases" -TestCases @( 
+			@{ cmd = 'add' }
+			@{ cmd = 'a'; }
+		) {
+			param($cmd)
+
+			Set-Variable -Name TODOTXT_DATE_ON_ADD -Value $true -Scope Global
+
+			$content = "A new task"
+
+			Todo $cmd $content
+			((Todo list) | Measure-Object).Count | Should Be 5 
+			Get-Task $content | Should Be "1997-04-20 $content"
 		}
 
 		# TODO Add some tests to set up Verbose for this to make sure the messages are showing up

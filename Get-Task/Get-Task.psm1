@@ -3,6 +3,7 @@
 #
 
 Import-Module todotxtlib
+Import-Module Helpers
 
 function Get-Task {
 [CmdletBinding(DefaultParameterSetName='Filter')]  
@@ -56,20 +57,6 @@ param(
 	}
 	
 	return ,$todos
-}
-
-function ValidatePaths {
-	param([string[]] $path)
-
-	if(-not $path) {
-		throw 'No task file specified' 
-	}
-
-	$path | % {
-		if(-not (Test-Path($_))){
-			throw "Task file $_ does not exist"
-		}
-	}
 }
 
 Export-ModuleMember -Function Get-Task

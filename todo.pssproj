@@ -36,6 +36,7 @@
     <Compile Include="Get-Context\Get-Context.psm1" />
     <Compile Include="Get-Project\Get-Project.psm1" />
     <Compile Include="Get-Task\Get-Task.psm1" />
+    <Compile Include="Helpers\Helpers.psm1" />
     <Compile Include="license.txt" />
     <Compile Include="readme.markdown" />
     <Compile Include="tests\Edit-Task.tests.ps1" />
@@ -57,6 +58,7 @@
     <Folder Include="Get-Project\" />
     <Folder Include="Get-Context\" />
     <Folder Include="Add-Task\" />
+    <Folder Include="Helpers\" />
     <Folder Include="tests\temp\" />
     <Folder Include="todotxtlib\" />
     <Folder Include="tests\" />

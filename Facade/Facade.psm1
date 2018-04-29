@@ -92,6 +92,8 @@ param()
 	{
 		$todo = ([String]::Join(" ", $args[1..$args.Length])).Trim()
 
+		Write-Host "date on add: $TODOTXT_DATE_ON_ADD"
+
 		Add-Task $todo -Path $TODO_FILE -PrefixDate:$TODOTXT_DATE_ON_ADD -Verbose:$TODOTXT_VERBOSE
 	}
 	elseif($cmd -eq "addm")

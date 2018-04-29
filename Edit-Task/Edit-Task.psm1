@@ -174,19 +174,19 @@ function ReplaceTaskInList {
 	Write-Verbose ("$index " + $list[$index-1].Body)
 }
 
-function ValidatePaths {
-	param([string[]] $path)
+#function ValidatePaths {
+#	param([string[]] $path)
 
-	if(-not $path) {
-		throw 'No task file specified' 
-	}
+#	if(-not $path) {
+#		throw 'No task file specified' 
+#	}
 
-	$path | % {
-		if(-not (Test-Path($_))){
-			throw "Task file $_ does not exist"
-		}
-	}
-}
+#	$path | % {
+#		if(-not (Test-Path($_))){
+#			throw "Task file $_ does not exist"
+#		}
+#	}
+#}
 
 Export-ModuleMember -Function Edit-TaskList
 Export-ModuleMember -Function Edit-Task
