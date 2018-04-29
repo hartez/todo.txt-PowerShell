@@ -94,6 +94,33 @@ Describe "Todo shell Facade" {
 		}
 
 		# TODO Add some tests to set up Verbose for this to make sure the messages are showing up
+		# TODO Add some tests which set $TODOTXT_DATE_ON_ADD
+	}
+
+	Context "facade addm" {
+
+		BeforeEach { SetupTempList -Path ".\tests\temp\facade_add_tests.txt" }
+
+		AfterEach { RemoveTempList }
+
+		It "should add multiple tasks with the 'addm' command alias" -TestCases @( 
+			@{ cmd = 'addm' }
+		) {
+			param($cmd)
+
+			$content = @"
+task 1
+task 2
+task 3
+"@
+
+			Todo $cmd $content
+			((Todo list) | Measure-Object).Count | Should Be 7 
+			Get-Task "task 1" | Should Be "task 1"
+			Get-Task "task 2" | Should Be "task 2"
+			Get-Task "task 3" | Should Be "task 3"
+		}
+
 	}
 
 	Context "facade rm" {
@@ -180,7 +207,7 @@ Describe "Todo shell Facade" {
 		}
 	}
 
-	# addm
+	
 	# replace
 	# prepend
 	

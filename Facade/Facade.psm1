@@ -99,7 +99,7 @@ param()
 		$split = $args[$args.Length - 1].Split([environment]::newline, [StringSplitOptions]'RemoveEmptyEntries')
 
 		($split) | % {
-			Add-ToDo $_
+			Add-Task $_ -Path $TODO_FILE -PrefixDate:$TODOTXT_DATE_ON_ADD -Verbose:$TODOTXT_VERBOSE
 		}
 	}
 	elseif($cmd -eq "rm" -or $cmd -eq "del")
