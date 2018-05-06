@@ -106,7 +106,7 @@ param()
 	}
 	elseif($cmd -eq "rm" -or $cmd -eq "del")
 	{
-		Remove-ToDo $args[1] $args[2]
+		Remove-Task $args[1] -Term $args[2] -Path $TODO_FILE -Verbose:$TODOTXT_VERBOSE
 	}
 	elseif($cmd -eq "listproj" -or $cmd -eq "lsprj" )
 	{

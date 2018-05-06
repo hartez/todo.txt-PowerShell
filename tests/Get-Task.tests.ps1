@@ -41,6 +41,10 @@ Describe "Get-Task" {
 			(Get-Task -Priority A | Measure-Object).Count | Should Be 1
 			(Get-Task -Priority D | Measure-Object).Count | Should Be 2
 		}	
+
+		It "should return nothing because there is no match" {
+			Get-Task nothing | Should Be $null
+		}
 	} 
 
 	Context "including completed tasks" {

@@ -39,11 +39,13 @@
     <Compile Include="Helpers\Helpers.psm1" />
     <Compile Include="license.txt" />
     <Compile Include="readme.markdown" />
+    <Compile Include="Remove-Task\Remove-Task.psm1" />
     <Compile Include="tests\Add-Task.tests.ps1" />
     <Compile Include="tests\Edit-Task.tests.ps1" />
     <Compile Include="tests\data.txt" />
     <Compile Include="tests\Facade.tests.ps1" />
     <Compile Include="tests\Get-Task.tests.ps1" />
+    <Compile Include="tests\Remove-Task.tests.ps1" />
     <Compile Include="tests\TestSetup.ps1" />
     <Compile Include="todo.cs" />
     <Compile Include="todo.ps1xml" />
@@ -60,6 +62,7 @@
     <Folder Include="Get-Context\" />
     <Folder Include="Add-Task\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Remove-Task\" />
     <Folder Include="tests\temp\" />
     <Folder Include="todotxtlib\" />
     <Folder Include="tests\" />

@@ -11,30 +11,32 @@ Import-Module Helpers
 ## TODO Test bad paths
 ## TODO Test verbose
 
+## TODO Determine once and for all what your parameter casing is going to be and make it consistent
+
 function Add-Task {
 	[cmdletbinding()]
 	param(
 		[Parameter(ValueFromPipeline, Mandatory=$true, Position = 0)]
-		[string] $Task,
-		[string] $Path = $TODO_FILE,
-		[switch] $PrefixDate
+		[string] $task,
+		[string] $path = $TODO_FILE,
+		[switch] $prefixDate
 	)
 
 	Begin {
-		ValidatePaths($path) 
+		ValidatePaths($Path) 
 	}
 
 	Process {
 		
-		if($PrefixDate) 
+		if($prefixDate) 
 		{
-			$Task = ((Get-Date -format "yyyy-MM-dd") + " " + $Task)
+			$task = ((Get-Date -format "yyyy-MM-dd") + " " + $task)
 		}
 
-		Add-Content $Path $Task
+		Add-Content $path $task
 
-		$taskNum = (Get-Content $Path | Measure-Object).Count
-		Write-Verbose "$taskNum $Task"
+		$taskNum = (Get-Content $path | Measure-Object).Count
+		Write-Verbose "$taskNum $task"
 		Write-Verbose "$taskNum added."
 	}
 }

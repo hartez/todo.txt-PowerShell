@@ -160,6 +160,8 @@ task 3
 			Todo $cmd 4
 			((Todo list) | Measure-Object).Count | Should Be 3 
 		}
+
+		## TODO Add test for index out of range (should just write error to host)
 	}
 
 	Context "facade list projects" {
