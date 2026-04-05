@@ -4,22 +4,23 @@
 		<View>
 			<Name>TaskList-Custom</Name>
 			<ViewSelectedBy>
-				<TypeName>todotxtlib.net.Task</TypeName>
+				<TypeName>todotxtlib.net.NumberedTask</TypeName>
 			</ViewSelectedBy>
 			<CustomControl>
 				<CustomEntries>
 					<CustomEntry>
 						<CustomItem>
 							<ExpressionBinding>
-								<ScriptBlock>'{0,3}' -f $_.ItemNumber</ScriptBlock>
+								<ScriptBlock>'{0,3}' -f $_.Number</ScriptBlock>
 							</ExpressionBinding>
 							<Text> </Text>
 							<ExpressionBinding>
 								<ScriptBlock>
-									$w = $_.Raw.Length;
+									$raw = $_.Task.ToString()
+									$w = $raw.Length;
 									$e = "";
 									if($w -gt ([console]::BufferWidth - 9)){$e = "..."; $w = ([console]::BufferWidth - 9);}
-									$_.Raw.Substring(0, $w) + $e;
+									$raw.Substring(0, $w) + $e;
 								</ScriptBlock>
 							</ExpressionBinding>
 						</CustomItem>
@@ -29,4 +30,3 @@
 		</View>
 	</ViewDefinitions>
 </Configuration>
-

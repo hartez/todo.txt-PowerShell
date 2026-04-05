@@ -2,3 +2,6 @@ msbuild.log
 target/
 test/
 packages/
+lib/
+staging/
+.vscode/

@@ -5,7 +5,7 @@ param (
     [switch] $ModifyProfile,
 
     [parameter(Mandatory = $false, ValueFromPipeline = $true, Position = 1, HelpMessage = 'Path to install PowerShell Module to')]
-    [string] $InstallPath = $env:homedrive + "\" + $env:homepath + "\Documents\WindowsPowerShell\Modules\todo",
+    [string] $InstallPath = $env:homedrive + "\" + $env:homepath + "\Documents\PowerShell\Modules\todo",
 
     [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 2, HelpMessage = 'Path to todo.txt')]
     [ValidateScript({Test-Path $_})]
@@ -16,7 +16,10 @@ param (
     [string] $DONE_FILE,
 
     [parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 4, HelpMessage = 'Path to nuget.exe (if not already in your path)')]
-    [string] $nugetExePath
+    [string] $nugetExePath,
+
+    [parameter(Mandatory = $false, ValueFromPipeline = $true, Position = 1, HelpMessage = 'Path to install PowerShell Module to')]
+    [string] $ttlSearchPath = $null
 )
 
 function Get-DropboxFolder {
@@ -34,11 +37,10 @@ function Get-ScriptDirectory
 
 $files = @("license.txt", "readme.markdown", "todo.ps1xml", "todo.psd1", "todo.psm1", "todo_cfg.ps1")
 
+if($ttlSearchPath -eq $null){
+    $ttlSearchPath = Join-Path -Path (Get-ScriptDirectory) -ChildPath packages\todotxtlib.net.*\lib\net35\todotxtlib.net.dll
+}
 
-$ttlSearchPath = Join-Path `
-		-Path (Get-ScriptDirectory) `
-		-ChildPath packages\todotxtlib.net.*\lib\net35\todotxtlib.net.dll
-		
 $ttlPath = Get-ChildItem -Path $ttlSearchPath -ErrorAction SilentlyContinue |
 	Select-Object -First 1 -ExpandProperty FullName 
 
@@ -87,7 +89,7 @@ If ($ttlPath -eq $null) {
 		
 	Write-Host "todotxtlib.net assembly not found; retrieving it from NuGet"
 		
-	# Attempt to get the Razor libraries from nuget
+	# Attempt to get the todotxt library from nuget
 	$packageDestination = ([string](Get-ScriptDirectory) + "\packages")
 	if(!(Test-Path $packageDestination))
 	{
@@ -97,7 +99,7 @@ If ($ttlPath -eq $null) {
 	$nugetCmd = '$nugetExePath install todotxtlib.net /OutputDirectory $packageDestination'
 	iex "& $nugetCmd"
 		
-	# Now that it's installed, get the razor path again
+	# Now that it's installed, get the todotxt library path again
 	$ttlPath = Get-ChildItem -Path $ttlSearchPath |
 		Select-Object -First 1 -ExpandProperty FullName
 }

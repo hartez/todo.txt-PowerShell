@@ -1,26 +1,25 @@
 $assemblyPath = ($PSScriptRoot + '\staging\todotxtlib.net.dll')
 $assemblyLoadPath = ($PSScriptRoot + '\lib')
 
-if(!(Test-Path $assemblyLoadPath))
-{
+if (!(Test-Path $assemblyLoadPath)) {
 	New-Item $assemblyLoadPath -ItemType directory
 }
 
-$assemblyLoadPath = $assemblyLoadPath + '\todotxtlib.net.dll'
-
-# Before we try to load up the newest version of the DLL, we need to see if it's already loaded
-# so we'll try to New-Object a task list; if it fails, we'll know it's safe to copy the dll
-
-Try
-{
-	Copy-Item -Path $assemblyPath -Destination $assemblyLoadPath	
+Try {
+	New-Object -TypeName todotxtlib.net.TaskList 
 }
-Catch
-{
-	[system.exception]
-}
+Catch {
+	$assemblyLoadPath = $assemblyLoadPath + '\todotxtlib.net.dll'
 
-Add-Type -Path $assemblyLoadPath
+	Try {
+		Copy-Item -Path $assemblyPath -Destination $assemblyLoadPath	
+	}
+	Catch {
+		[system.exception]
+	}
+
+	Add-Type -Path $assemblyLoadPath
+}
 
 ## Figure out licensing and copyright stuff (including manifest)
 
@@ -30,7 +29,7 @@ function LoadConfiguration() {
 	## Set up the defaults
 	$script:TODOTXT_VERBOSE = $FALSE
 	$script:TODOTXT_FORCE = $FALSE
-	$script:TODOTXT_AUTO_ARCHIVE = $FALSE
+	$script:TODOTXT_AUTO_ARCHIVE = $FALSEget
 	$script:TODOTXT_PRESERVE_LINE_NUMBERS = $FALSE
 	$script:TODOTXT_DATE_ON_ADD = $TRUE
 	
@@ -40,8 +39,7 @@ function LoadConfiguration() {
 	$script:PRI_X = 'White'
 	
 	## Override the defaults with the configuration file
-	if(Test-Path $path)
-	{
+	if (Test-Path $path) {
 		.$path			
 	}
 }
@@ -99,158 +97,134 @@ function LoadConfiguration() {
 	Moves item 34 to otherfile.txt
 #>
 function ToDo {
-param()
+	param()
 	
-	if(!$configLocation)
-	{
+	if (!$configLocation) {
 		$configLocation = ($PSScriptRoot + '\todo_cfg.ps1')
 	}
 	
 	LoadConfiguration $configLocation
 	
 	## TODO process command line options for overrides
+
+	## TODO Add a command to mark pending
 	
 	$cmd = $args[0]
 	
-    $fore = $Host.UI.RawUI.ForegroundColor
+	$fore = $Host.UI.RawUI.ForegroundColor
 
-	if(!$cmd -or $cmd -eq "list" -or $cmd -eq "ls")
-    {
-		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]}
+	if (!$cmd -or $cmd -eq "list" -or $cmd -eq "ls") {
+		$todoArgs = @{path = $TODO_FILE; search = $args[1..$args.Length] }
 		
-        Format-Priority((Get-ToDo @todoArgs))
-    }
-	elseif($cmd -eq "listall" -or $cmd -eq "lsa")
-    {
-		$todoArgs = @{path=$TODO_FILE; search=$args[1..$args.Length]; includeCompletedTasks=$TRUE}
+		Format-Priority((Get-ToDo @todoArgs))
+	}
+	elseif ($cmd -eq "listall" -or $cmd -eq "lsa") {
+		$todoArgs = @{path = $TODO_FILE; search = $args[1..$args.Length]; includeCompletedTasks = $TRUE }
 		
 		Format-Priority((Get-ToDo @todoArgs)) 
-    }
-	elseif($cmd -eq "listfile" -or $cmd -eq "lf")
-    {
-		$todoArgs = @{path=$args[1]; search=$args[2..$args.Length]}
+	}
+	elseif ($cmd -eq "listfile" -or $cmd -eq "lf") {
+		$todoArgs = @{path = $args[1]; search = $args[2..$args.Length] }
 	
 		Format-Priority((Get-ToDo @todoArgs))
-    }
-	elseif($cmd -eq "add" -or $cmd -eq "a")
-	{
+	}
+	elseif ($cmd -eq "add" -or $cmd -eq "a") {
 		Add-Todo $args[1..$args.Length]
 	}
-	elseif($cmd -eq "addm")
-	{
+	elseif ($cmd -eq "addm") {
 		$split = $args[$args.Length - 1].Split([environment]::newline, [StringSplitOptions]'RemoveEmptyEntries')
 
 		($split) | % {
 			Add-ToDo $_
 		}
 	}
-	elseif($cmd -eq "rm" -or $cmd -eq "del")
-	{
+	elseif ($cmd -eq "rm" -or $cmd -eq "del") {
 		Remove-ToDo $args[1] $args[2]
 	}
-	elseif($cmd -eq "listproj" -or $cmd -eq "lsprj" )
-	{
+	elseif ($cmd -eq "listproj" -or $cmd -eq "lsprj" ) {
 		Get-Project
 	}
-	elseif($cmd -eq "listcon" -or $cmd -eq "lsc" )
-	{
+	elseif ($cmd -eq "listcon" -or $cmd -eq "lsc" ) {
 		Get-Context
 	}
-	elseif($cmd -eq "listpri" -or $cmd -eq "lsp")
-	{
+	elseif ($cmd -eq "listpri" -or $cmd -eq "lsp") {
 		Format-Priority((Get-Priority $args[1]))
 	}	
-	elseif($cmd -eq "replace")
-	{
+	elseif ($cmd -eq "replace") {
 		Replace-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
-	elseif($cmd -eq "prepend" -or $cmd -eq "prep")
-	{
+	elseif ($cmd -eq "prepend" -or $cmd -eq "prep") {
 		Prepend-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
-	elseif($cmd -eq "append" -or $cmd -eq "app")
-	{
+	elseif ($cmd -eq "append" -or $cmd -eq "app") {
 		Append-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
-	elseif($cmd -eq "do")
-	{
+	elseif ($cmd -eq "do") {
 		Set-ToDoComplete $args[1..$args.Length]
 	}
-	elseif($cmd -eq "archive")
-	{
+	elseif ($cmd -eq "archive") {
 		Archive-ToDo
 	}
-	elseif($cmd -eq "pri" -or $cmd -eq "p")
-	{
+	elseif ($cmd -eq "pri" -or $cmd -eq "p") {
 		Set-ToDoPriority $args[1] $args[2]
 	}
-	elseif($cmd -eq "depri" -or $cmd -eq "dp")
-	{
+	elseif ($cmd -eq "depri" -or $cmd -eq "dp") {
 		Deprioritize-ToDo $args[1..$args.Length]
 	}
-	elseif($cmd -eq "move" -or $cmd -eq "mv")
-	{
-		if($args[3])
-		{
+	elseif ($cmd -eq "move" -or $cmd -eq "mv") {
+		if ($args[3]) {
 			Move-ToDo $args[1] $args[2] $args[3]
 		}
-		else
-		{
+		else {
 			Move-ToDo $args[1] $args[2] 
 		}
 	}
-	elseif($cmd -eq "help")
-	{
+	elseif ($cmd -eq "help") {
 		Get-Help Todo
 	}
 }
 
 function Format-Priority {
-param(
-		[object[]] $tasks
+	param(
+		[object[]] $numberedTasks
 	)
-	
-	$tasks | % {
 
-        if($_.Raw -match "\(A\)")
-		{
-			    $Host.UI.RawUI.ForegroundColor = $PRI_A
+	$numberedTasks | ForEach-Object {
+
+		$pri = $_.Priority
+
+		if ($pri -eq "A") {
+			$Host.UI.RawUI.ForegroundColor = $PRI_A
 		}
-		elseif($_.Raw -match "\(B\)")
-		{
-			    $Host.UI.RawUI.ForegroundColor = $PRI_B
+		elseif ($pri -eq "B") {
+			$Host.UI.RawUI.ForegroundColor = $PRI_B
 		}
-		elseif($_.Raw -match "\(C\)")
-		{
-			    $Host.UI.RawUI.ForegroundColor = $PRI_C
+		elseif ($pri -eq "C") {
+			$Host.UI.RawUI.ForegroundColor = $PRI_C
 		}
-		elseif($_.Raw -match "\([D-Z]\)")
-		{
-			    $Host.UI.RawUI.ForegroundColor = $PRI_X
+		elseif ($pri -match "[D-Z]") {
+			$Host.UI.RawUI.ForegroundColor = $PRI_X
 		}
-		else
-		{
-			    $Host.UI.RawUI.ForegroundColor = $fore
+		else {
+			$Host.UI.RawUI.ForegroundColor = $fore
 		}
 
-        $_
-    }
+		$_
+	}
 
-    $Host.UI.RawUI.ForegroundColor = $fore
+	$Host.UI.RawUI.ForegroundColor = $fore
 }
 
 function ParseToDoList {
-param(
+	param(
 		[string] $path = $TODO_FILE,
 		[boolean] $includeCompletedTasks = $FALSE
 	)
 	
-	if($includeCompletedTasks -and $DONE_FILE -and (Test-Path $DONE_FILE))
-	{
+	if ($includeCompletedTasks -and $DONE_FILE -and (Test-Path $DONE_FILE)) {
 		$listLocations = @($path, $DONE_FILE)
 	}
-	else
-	{
+	else {
 		$listLocations = @($path)
 	}
 	
@@ -258,13 +232,12 @@ param(
 
 	$results = @(Get-Content $listLocations)
 		
-	for ($i=0; $i -lt $results.Length; $i++)
-	{
-		$todo = New-Object todotxtlib.net.Task($results[$i], ($i + 1))
-		$todos.Add($todo)
+	for ($i = 0; $i -lt $results.Length; $i++) {
+		## TODO probably can use foreach because we don't need the index anymore
+		$todos.Add($results[$i])
 	}
 	
-	return ,$todos
+	, $todos
 }
 
 function Move-ToDo {
@@ -274,23 +247,19 @@ function Move-ToDo {
 		[string] $src = $TODO_FILE
 	)
 	
-	if($dest)
-	{
-		if(!(Test-Path $dest))
-		{
+	if ($dest) {
+		if (!(Test-Path $dest)) {
 			Set-Content $dest ''
 		}
 	
 		$srcList = ParseToDoList $src
 		$destList = ParseToDoList $dest
 		
-		if($item -le $srcList.Count)
-		{
+		if ($item -le $srcList.Count) {
 			$oldItem = ($srcList[$item - 1]).Body
 			$confirmed = $TRUE
 		
-			if(!$TODOTXT_FORCE)
-			{
+			if (!$TODOTXT_FORCE) {
 				$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Moves the task."
 				$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Does nothing."
 	
@@ -298,14 +267,12 @@ function Move-ToDo {
 
 				$result = $host.ui.PromptForChoice("Move Item", "Move '$oldItem'?", $options, 1) 
 				
-				if($result -eq 1)
-				{
+				if ($result -eq 1) {
 					$confirmed = $FALSE
 				}
 			}
 
-			if($confirmed)
-			{
+			if ($confirmed) {
 				$task = New-Object todotxtlib.net.Task(($srcList[$item - 1].Raw), ($destList.Count + 1))
 			
 				## add it to the destination file
@@ -316,22 +283,18 @@ function Move-ToDo {
 				$srcList.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
 				$srcList.ToOutput() | Set-Content $src 
 				
-				if($TODOTXT_VERBOSE)
-				{
+				if ($TODOTXT_VERBOSE) {
 					Write-Host "$item $oldItem"
 					Write-Host "TODO: $item moved from '$src' to '$dest'."
 				}
 			}
-			else
-			{
-				if($TODOTXT_VERBOSE)
-				{
+			else {
+				if ($TODOTXT_VERBOSE) {
 					Write-Host "TODO: No tasks moved."
 				}
 			}
 		}
-		else
-		{
+		else {
 			Write-Host "No task $item."
 		}
 	}
@@ -340,57 +303,55 @@ function Move-ToDo {
 function Set-ToDoComplete {
 	param([int[]] $items)
 	
-	if($items)
-	{
-		$list = ParseToDoList
+	if (-not $items) {
+		return
+	}
+
+	$list = , (ParseToDoList)
 		
-		$items | % {
-			if($_ -le $list.Count)
-			{
-				if($list[$_ - 1].Done)
-				{
-					Write-Host "$_ is already marked done."
-				}
-				else
-				{
-					$list[$_ - 1].ToggleCompleted()
+	$items | ForEach-Object { 
+
+		if (-not $list.ItemExists($_)) {
+			Write-Host "No task $_."
+		}
+		else {
+
+			$task = $list.GetTask($_)
+
+			if ($task.Completed) {
+				Write-Host "$_ is already marked done."
+			}
+			else {
+				$list.MarkCompleted($_)
 					
-					if($TODOTXT_VERBOSE)
-					{
-						Write-Host ("$_ " + $list[$_ - 1].Body)
-						Write-Host "TODO: $_ marked as done."
-					}
+				if ($TODOTXT_VERBOSE) {
+					Write-Host ($task)
+					Write-Host "TODO: $_ marked as done."
 				}
 			}
-			else
-			{
-				Write-Host "No task $_."
-			}
+
 		}
+	}
 		
-		$list.ToOutput() | Set-Content $TODO_FILE
+	$list.ToOutput() | Set-Content $TODO_FILE
 		
-		if($TODOTXT_AUTO_ARCHIVE)
-		{
-			Archive-ToDo
-		}
+	if ($TODOTXT_AUTO_ARCHIVE) {
+		Archive-ToDo
 	}
 }
 
 function Archive-ToDo {
 
 	## Todo figure out what to do if $DONE_FILE isn't specified
-	if($DONE_FILE)
-	{
+	if ($DONE_FILE) {
 		$list = ParseToDoList
 		$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 		
 		$completed.ToOutput() | Add-Content $DONE_FILE 
 		$list.ToOutput() | Set-Content $TODO_FILE 
 		
-		if($TODOTXT_VERBOSE)
-		{
-			$completed.ToNumberedOutput() | % {Write-Host $_}
+		if ($TODOTXT_VERBOSE) {
+			$completed.ToNumberedOutput() | % { Write-Host $_ }
 			Write-Host "TODO: $TODO_FILE archived."
 		}
 	}
@@ -402,17 +363,14 @@ function Deprioritize-ToDo {
 	$list = ParseToDoList
 	
 	$items | % {
-		if($_ -le $list.Count)
-		{
+		if ($_ -le $list.Count) {
 			$list.SetItemPriority($_, '')
-			if($TODOTXT_VERBOSE)
-			{
+			if ($TODOTXT_VERBOSE) {
 				Write-Host ("$_ " + $list[$_ - 1].Text)
 				Write-Host "TODO: $_ deprioritized."
 			}
 		}
-		else
-		{
+		else {
 			Write-Host "No task $_."
 		}
 	}
@@ -424,22 +382,18 @@ function Set-ToDoPriority {
 	param([int] $item,
 		[string] $priority)
 
-	if($priority -match "^[A-Z]{1}$")
-	{
+	if ($priority -match "^[A-Z]{1}$") {
 		$list = ParseToDoList
 		
-		if($item -le $list.Count)
-		{
-    		$list.SetItemPriority($item, $priority)
+		if ($item -le $list.Count) {
+			$list.SetItemPriority($item, $priority)
 			$list.ToOutput() | Set-Content $TODO_FILE
-			if($TODOTXT_VERBOSE)
-			{
+			if ($TODOTXT_VERBOSE) {
 				Write-Host ("$item " + $list[$item - 1].Text)
 				Write-Host "TODO: $item prioritized ($priority)."
 			}
 		}
-		else
-		{
+		else {
 			Write-Host "No task $item."
 		}
 	}
@@ -448,50 +402,51 @@ function Set-ToDoPriority {
 }
 
 function Get-ToDo {
-param(
+	param(
 		[string[]] $search,
 		[boolean] $includeCompletedTasks = $FALSE,
 		[string] $path = $TODO_FILE
 	)
 	
 	## TODO Error/warning message for no todo location set
-	
+
 	$list = ParseToDoList $path $includeCompletedTasks
 	
-	if($search)
-	{
+	if ($search) {
 		$search = [String]::Join(" ", $search).Trim() 
 	}
 	
-	if(!$search)
-	{
+	if (!$search) {
 		$result = $list
 	}
-	else
-	{
+	else {
 		## TODO - check for '-' at the beginning of the search term and handle notMatch
 		$result = ($list.Search($search))
 	}
-	
-	return ,$result
+
+	$result
 }
 
 function Add-ToDo {
-param(
-	[string[]] $item
+	param(
+		[string[]] $item
 	)
 	
 	$item = ([String]::Join(" ", $item)).Trim()
 
-	if($TODOTXT_DATE_ON_ADD)
-	{
-		$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
+	if ($TODOTXT_DATE_ON_ADD) {
+		$todo = New-Object todotxtlib.net.Task($item)
+
+		if($TODOTXT_DATE_ON_ADD) {
+			$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
+		}
+
+		$item = $todo.Raw
 	}
 	
 	Add-Content $TODO_FILE ($item)
 	
-	if($TODOTXT_VERBOSE)
-	{
+	if ($TODOTXT_VERBOSE) {
 		$taskNum = (Get-Content $TODO_FILE | Measure-Object).Count
 		Write-Host "$taskNum $item"
 		Write-Host "$taskNum added."
@@ -499,42 +454,39 @@ param(
 }
 
 function Get-Context {
-	$matches = (select-string $TODO_FILE -pattern '\s(@\w+)' -AllMatches) | % {$_.Matches}
-	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique | Select -property @{N='Context';E={$_.Value}}
+	$matches = (select-string $TODO_FILE -pattern '\s(@\w+)' -AllMatches) | % { $_.Matches }
+	$matches | % { $_.Groups[1] } | Sort-Object | Get-Unique | Select -property @{N = 'Context'; E = { $_.Value } }
 }
 
 function Get-Project {
-	$matches = (select-string $TODO_FILE -pattern '\s(\+\w+)' -AllMatches) | % {$_.Matches}
-	$matches | % {$_.Groups[1]} | Sort-Object | Get-Unique | Select -property @{N='Project';E={$_.Value}}
+	$matches = (select-string $TODO_FILE -pattern '\s(\+\w+)' -AllMatches) | % { $_.Matches }
+	$matches | % { $_.Groups[1] } | Sort-Object | Get-Unique | Select -property @{N = 'Project'; E = { $_.Value } }
 }
 
 function Get-Priority {
-param(
-	[string] $priority
+	param(
+		[Nullable[char]] $priority 
 	)
 
 	$list = ParseToDoList
-	,$list.GetPriority($priority) 
+	$list.GetPriority($priority) 
 }
 
 function Prepend-ToDo {
 	param(
 		[int] $item,
 		[string] $term
-		)
+	)
 
 	$list = ParseToDoList
 	
-	if($term)
-	{
-		if($item -le $list.Count)
-		{
+	if ($term) {
+		if ($item -le $list.Count) {
 			$list.PrependToTask($item, $term)
 			$list.ToOutput() | Set-Content $TODO_FILE
 		
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host ("$item " + $list[$item-1].Body)
+			if ($TODOTXT_VERBOSE) {
+				Write-Host ("$item " + $list[$item - 1].Body)
 			}
 		}
 	}
@@ -544,20 +496,17 @@ function Append-ToDo {
 	param(
 		[int] $item,
 		[string] $term
-		)
+	)
 
 	$list = ParseToDoList
 	
-	if($term)
-	{
-		if($item -le $list.Count)
-		{
+	if ($term) {
+		if ($item -le $list.Count) {
 			$list.AppendToTask($item, $term)
 			$list.ToOutput() | Set-Content $TODO_FILE
 			
-			if($TODOTXT_VERBOSE)
-			{
-				Write-Host ("$item " + $list[$item-1].Body)
+			if ($TODOTXT_VERBOSE) {
+				Write-Host ("$item " + $list[$item - 1].Body)
 			}
 		}
 	}
@@ -567,21 +516,18 @@ function Replace-ToDo {
 	param(
 		[int] $item,
 		[string] $term
-		)
+	)
 		
 	$list = ParseToDoList
 	
-	if($term)
-	{
-		if($item -le $list.Count)
-		{
-			$oldText = $list[$item-1].Body
+	if ($term) {
+		if ($item -le $list.Count) {
+			$oldText = $list[$item - 1].Body
 			
 			$list.ReplaceInTask($item, $term)
 			$list.ToOutput() | Set-Content $TODO_FILE
 			
-			if($TODOTXT_VERBOSE)
-			{
+			if ($TODOTXT_VERBOSE) {
 				Write-Host "$item $oldText"
 				Write-Host "TODO: Replaced task with:"
 				Write-Host "$item $term"
@@ -591,41 +537,35 @@ function Replace-ToDo {
 }
 
 function Remove-ToDo {
-param(
-	[int] $item,
-	[string] $term
+	param(
+		[int] $item,
+		[string] $term
 	)
 	
 	$list = ParseToDoList
 	
-	if($item -le $list.Count)
-	{
+	if ($item -le $list.Count) {
 		$oldItem = ($list[$item - 1]).Body
 	
-		if($term)
-		{
-			$success =  $list.RemoveFromTask($item, $term)
+		if ($term) {
+			$success = $list.RemoveFromTask($item, $term)
 			$list.ToOutput() | Set-Content $TODO_FILE
 			
-			if($success)
-			{
+			if ($success) {
 				$newItem = ($list[$item - 1]).Body
 				Write-Host "$item $oldItem"
 				Write-Host "TODO: Removed '$term' from task."
 				Write-Host "$item $newItem"
 			}
-			else
-			{
+			else {
 				Write-Host "$item $oldItem"
 				Write-Host "TODO: '$term' not found; no removal done."
 			}
 		}
-		else
-		{
+		else {
 			$confirmed = $TRUE
 		
-			if(!$TODOTXT_FORCE)
-			{
+			if (!$TODOTXT_FORCE) {
 				$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Deletes the task."
 				$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Retains the task."
 	
@@ -633,31 +573,26 @@ param(
 
 				$result = $host.ui.PromptForChoice("Delete Item", "Delete '$oldItem'?", $options, 1) 
 				
-				if($result -eq 1)
-				{
+				if ($result -eq 1) {
 					$confirmed = $FALSE
 				}
 			}
 
-			if($confirmed)
-			{
+			if ($confirmed) {
 				$list.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
 				$list.ToOutput() | Set-Content $TODO_FILE	
 				
-				if($TODOTXT_VERBOSE)
-				{
+				if ($TODOTXT_VERBOSE) {
 					Write-Host ("$item $oldItem") 
 					Write-Host ("TODO: $item deleted")
 				}
 			}
-			else
-			{
+			else {
 				Write-Host "TODO: No tasks were deleted"
 			}
 		}
 	}
-	else
-	{
+	else {
 		Write-Host "TODO: No task $item"
 	}
 }
