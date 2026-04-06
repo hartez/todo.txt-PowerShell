@@ -3,10 +3,6 @@
 $TODO_FILE = "C:\Users\hartez\Dropbox\testtodo\todo.txt"
 Update-FormatData -AppendPath .\todo.ps1xml
 
-
-# TODO don't forget to update the ps1xml to use the in-built tostring and stop spacing things at 3 characters for the numbers
-
-
 $assemblyPath = ($PSScriptRoot + '\staging\todotxtlib.net.dll')
 $assemblyLoadPath = ($PSScriptRoot + '\lib')
 
