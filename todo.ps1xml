@@ -11,12 +11,8 @@
 					<CustomEntry>
 						<CustomItem>
 							<ExpressionBinding>
-								<ScriptBlock>'{0,3}' -f $_.Number</ScriptBlock>
-							</ExpressionBinding>
-							<Text> </Text>
-							<ExpressionBinding>
 								<ScriptBlock>
-									$raw = $_.Task.ToString()
+									$raw = $_.ToString()
 									$w = $raw.Length;
 									$e = "";
 									if($w -gt ([console]::BufferWidth - 9)){$e = "..."; $w = ([console]::BufferWidth - 9);}
