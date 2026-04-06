@@ -5,3 +5,4 @@ packages/
 lib/
 staging/
 .vscode/
+reset.ps1

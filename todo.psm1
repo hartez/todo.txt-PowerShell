@@ -1,3 +1,12 @@
+# TODO Take these out when you're done debugging
+
+$TODO_FILE = "C:\Users\hartez\Dropbox\testtodo\todo.txt"
+Update-FormatData -AppendPath .\todo.ps1xml
+
+
+# TODO don't forget to update the ps1xml to use the in-built tostring and stop spacing things at 3 characters for the numbers
+
+
 $assemblyPath = ($PSScriptRoot + '\staging\todotxtlib.net.dll')
 $assemblyLoadPath = ($PSScriptRoot + '\lib')
 
@@ -147,7 +156,7 @@ function ToDo {
 		Get-Project
 	}
 	elseif ($cmd -eq "listcon" -or $cmd -eq "lsc" ) {
-		Get-Context
+		Get-Contexts
 	}
 	elseif ($cmd -eq "listpri" -or $cmd -eq "lsp") {
 		Format-Priority((Get-Priority $args[1]))
@@ -230,17 +239,61 @@ function ParseToDoList {
 		$listLocations = @($path)
 	}
 	
-	$todos = New-Object todotxtlib.net.TaskList
+	$list = New-Object todotxtlib.net.TaskList
 
+	## TODO doing this right now to support listall and multiple sources; could
+	## just as easily support that directly in the library with params paths[]
 	$results = @(Get-Content $listLocations)
 		
-	for ($i = 0; $i -lt $results.Length; $i++) {
-		## TODO probably can use foreach because we don't need the index anymore
-		$todos.Add($results[$i])
+	$results | ForEach-Object {
+		$list.Add($_)
+	}
+		
+	, $list
+}
+
+function Get-ToDo {
+	param(
+		[string[]] $search,
+		[boolean] $includeCompletedTasks = $FALSE,
+		[string] $path = $TODO_FILE
+	)
+	
+	## TODO Error/warning message for no todo location set
+
+	$list = ParseToDoList $path $includeCompletedTasks
+	
+	if ($search) {
+		$search = [String]::Join(" ", $search).Trim() 
 	}
 	
-	, $todos
+	if (!$search) {
+		return $list
+	}
+	
+	## TODO - check for '-' at the beginning of the search term and handle notMatch
+	($list.Search($search))
 }
+
+function Add-ToDo {
+	param(
+		[string[]] $item
+	)
+	
+	$item = ([String]::Join(" ", $item)).Trim()
+
+	$list = ParseToDoList
+
+	$newTask = $list.Create($item, $TODOTXT_DATE_ON_ADD)
+	
+	$list.SaveTasks($TODO_FILE)
+
+	if ($TODOTXT_VERBOSE) {
+		Write-Host $newTask
+		Write-Host "$($newTask.Number) added."
+	}
+}
+
 
 function Set-ToDoComplete {
 	param([int[]] $items)
@@ -249,8 +302,8 @@ function Set-ToDoComplete {
 		return
 	}
 
-	$list = , (ParseToDoList)
-		
+	$list = ParseToDoList		
+
 	$items | ForEach-Object { 
 
 		if (-not $list.ItemExists($_)) {
@@ -275,220 +328,11 @@ function Set-ToDoComplete {
 		}
 	}
 		
-	$list.ToOutput() | Set-Content $TODO_FILE
+	$list.SaveTasks($TODO_FILE)
 		
 	if ($TODOTXT_AUTO_ARCHIVE) {
 		Archive-ToDo
 	}
-}
-
-
-
-
-
-
-
-function Add-ToDo {
-	param(
-		[string[]] $item
-	)
-	
-	$item = ([String]::Join(" ", $item)).Trim()
-
-	$list = , (ParseToDoList)
-
-	$list | Get-Member
-
-	$newTask = $list.Add($item, $TODOTXT_DATE_ON_ADD)
-
-	# if ($TODOTXT_DATE_ON_ADD) {
-	# 	$todo = New-Object todotxtlib.net.Task($item)
-
-	# 	if($TODOTXT_DATE_ON_ADD) {
-	# 		$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
-	# 	}
-
-	# 	$item = $todo.Raw
-	# }
-	
-	# Add-Content $TODO_FILE ($item)
-	
-	# TODO We do this in a couple of places, might need to make this its own function
-	$list.ToOutput() | Set-Content $TODO_FILE
-
-	if ($TODOTXT_VERBOSE) {
-		Write-Host $newTask
-		Write-Host "${$newTask.Number} added."
-	}
-}
-
-
-
-
-
-
-
-
-
-function Move-ToDo {
-	param (
-		[int] $item,
-		[string] $dest,
-		[string] $src = $TODO_FILE
-	)
-	
-	if ($dest) {
-		if (!(Test-Path $dest)) {
-			Set-Content $dest ''
-		}
-	
-		$srcList = ParseToDoList $src
-		$destList = ParseToDoList $dest
-		
-		if ($item -le $srcList.Count) {
-			$oldItem = ($srcList[$item - 1]).Body
-			$confirmed = $TRUE
-		
-			if (!$TODOTXT_FORCE) {
-				$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Moves the task."
-				$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Does nothing."
-	
-				$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
-
-				$result = $host.ui.PromptForChoice("Move Item", "Move '$oldItem'?", $options, 1) 
-				
-				if ($result -eq 1) {
-					$confirmed = $FALSE
-				}
-			}
-
-			if ($confirmed) {
-				$task = New-Object todotxtlib.net.Task(($srcList[$item - 1].Raw), ($destList.Count + 1))
-			
-				## add it to the destination file
-				$destList.Add($task)
-				$destList.ToOutput() | Set-Content $dest 
-				
-				## remove it from the original
-				$srcList.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
-				$srcList.ToOutput() | Set-Content $src 
-				
-				if ($TODOTXT_VERBOSE) {
-					Write-Host "$item $oldItem"
-					Write-Host "TODO: $item moved from '$src' to '$dest'."
-				}
-			}
-			else {
-				if ($TODOTXT_VERBOSE) {
-					Write-Host "TODO: No tasks moved."
-				}
-			}
-		}
-		else {
-			Write-Host "No task $item."
-		}
-	}
-}
-
-
-
-function Archive-ToDo {
-
-	## Todo figure out what to do if $DONE_FILE isn't specified
-	if ($DONE_FILE) {
-		$list = ParseToDoList
-		$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
-		
-		$completed.ToOutput() | Add-Content $DONE_FILE 
-		$list.ToOutput() | Set-Content $TODO_FILE 
-		
-		if ($TODOTXT_VERBOSE) {
-			$completed.ToNumberedOutput() | % { Write-Host $_ }
-			Write-Host "TODO: $TODO_FILE archived."
-		}
-	}
-}
-
-function Deprioritize-ToDo {
-	param([int[]] $items)
-	
-	$list = ParseToDoList
-	
-	$items | % {
-		if ($_ -le $list.Count) {
-			$list.SetItemPriority($_, '')
-			if ($TODOTXT_VERBOSE) {
-				Write-Host ("$_ " + $list[$_ - 1].Text)
-				Write-Host "TODO: $_ deprioritized."
-			}
-		}
-		else {
-			Write-Host "No task $_."
-		}
-	}
-	
-	$list.ToOutput() | Set-Content $TODO_FILE
-}
-
-function Set-ToDoPriority {
-	param([int] $item,
-		[string] $priority)
-
-	if ($priority -match "^[A-Z]{1}$") {
-		$list = ParseToDoList
-		
-		if ($item -le $list.Count) {
-			$list.SetItemPriority($item, $priority)
-			$list.ToOutput() | Set-Content $TODO_FILE
-			if ($TODOTXT_VERBOSE) {
-				Write-Host ("$item " + $list[$item - 1].Text)
-				Write-Host "TODO: $item prioritized ($priority)."
-			}
-		}
-		else {
-			Write-Host "No task $item."
-		}
-	}
-	
-	## TODO show usage
-}
-
-function Get-ToDo {
-	param(
-		[string[]] $search,
-		[boolean] $includeCompletedTasks = $FALSE,
-		[string] $path = $TODO_FILE
-	)
-	
-	## TODO Error/warning message for no todo location set
-
-	$list = ParseToDoList $path $includeCompletedTasks
-	
-	if ($search) {
-		$search = [String]::Join(" ", $search).Trim() 
-	}
-	
-	if (!$search) {
-		$result = $list
-	}
-	else {
-		## TODO - check for '-' at the beginning of the search term and handle notMatch
-		$result = ($list.Search($search))
-	}
-
-	$result
-}
-
-
-
-function Get-Context {
-	$matches = (select-string $TODO_FILE -pattern '\s(@\w+)' -AllMatches) | % { $_.Matches }
-	$matches | % { $_.Groups[1] } | Sort-Object | Get-Unique | Select -property @{N = 'Context'; E = { $_.Value } }
-}
-
-function Get-Project {
-	$matches = (select-string $TODO_FILE -pattern '\s(\+\w+)' -AllMatches) | % { $_.Matches }
-	$matches | % { $_.Groups[1] } | Sort-Object | Get-Unique | Select -property @{N = 'Project'; E = { $_.Value } }
 }
 
 function Get-Priority {
@@ -500,23 +344,95 @@ function Get-Priority {
 	$list.GetPriority($priority) 
 }
 
+# For Get-Context and Get-Project, we don't need to worry about item numbers. So even though we _could_ parse the whole list
+# into a TaskList and retrieve all the tags from it, it's just as easy to do it in PowerShell-ish way and avoid the overhead
+
+function Get-Context {
+	Select-String $TODO_FILE -Pattern '\s(@\w+)' -AllMatches 
+		| Select-Object -Property @{N = 'Context'; E = {$_.Matches.Groups[1].ToString()}} 
+		|  Sort-Object -Property Context -Unique
+}
+
+function Get-Project {
+	Select-String $TODO_FILE -Pattern '\s(\+\w+)' -AllMatches 
+		| Select-Object -Property @{N = 'Project'; E = {$_.Matches.Groups[1].ToString()}} 
+		|  Sort-Object -Property Project -Unique
+}
+
+function Set-ToDoPriority {
+	param([int] $item,
+		[string] $priority)
+
+	if ($priority -match "^[A-Z]{1}$") {
+		$list = ParseToDoList
+		
+		if (-not $list.ItemExists($_)) {
+			Write-Host "No task $item."
+		} 
+		else {
+			$list.SetItemPriority($item, $priority)
+			$list.SaveTasks($TODO_FILE)
+
+			## TODO This one never had an if(verbose) - should it?
+		}
+	} else{
+		Write-Host "Priority must be A-Z"
+	}
+	
+	## TODO show usage
+}
+
+function Deprioritize-ToDo {
+	param([int[]] $items)
+	
+	if($items.Length -eq 0){
+		return
+	}
+
+	$list = ParseToDoList
+	
+	$items | ForEach-Object {
+		
+		if (-not $list.ItemExists($_)) {
+			Write-Host "No task $_."
+		}
+		else {
+			$task = $list.GetTask($_)
+			$list.ClearItemPriority($_)
+			if ($TODOTXT_VERBOSE) {
+				Write-Host ($task)
+				Write-Host "TODO: $_ deprioritized."
+			}
+		}
+	}
+	
+	$list.SaveTasks($TODO_FILE)
+}
+
 function Prepend-ToDo {
 	param(
 		[int] $item,
 		[string] $term
 	)
 
+	if (-not $term) {
+		Write-Host "Please specify the text"
+		return
+	}
+
 	$list = ParseToDoList
+
+	if (-not $list.ItemExists($_)) {
+		Write-Host "No task $_."
+		return
+	}
 	
-	if ($term) {
-		if ($item -le $list.Count) {
-			$list.PrependToTask($item, $term)
-			$list.ToOutput() | Set-Content $TODO_FILE
-		
-			if ($TODOTXT_VERBOSE) {
-				Write-Host ("$item " + $list[$item - 1].Body)
-			}
-		}
+	$list.PrependToTask($item, $term)
+	$list.SaveTasks($TODO_FILE)
+	
+	if ($TODOTXT_VERBOSE) {
+		$task = $list.GetTask($item)
+		Write-Host $task
 	}
 }
 
@@ -526,41 +442,146 @@ function Append-ToDo {
 		[string] $term
 	)
 
+	if (-not $term) {
+		Write-Host "Please specify the text"
+		return
+	}
+
 	$list = ParseToDoList
-	
-	if ($term) {
-		if ($item -le $list.Count) {
-			$list.AppendToTask($item, $term)
-			$list.ToOutput() | Set-Content $TODO_FILE
+
+	if (-not $list.ItemExists($_)) {
+		Write-Host "No task $_."
+		return
+	}
 			
-			if ($TODOTXT_VERBOSE) {
-				Write-Host ("$item " + $list[$item - 1].Body)
-			}
-		}
+	$list.AppendToTask($item, $term)
+	$list.SaveTasks($TODO_FILE)
+	
+	if ($TODOTXT_VERBOSE) {
+		$task = $list.GetTask($item)
+		Write-Host $task
 	}
 }
 
 function Replace-ToDo {
 	param(
 		[int] $item,
-		[string] $term
+		[string] $task
 	)
 		
+	if (-not $task) {
+		Write-Host "Please specify the replacement task"
+		return
+	}
+
 	$list = ParseToDoList
+
+	if (-not $list.ItemExists($_)) {
+		Write-Host "No task $_."
+		return
+	}
+
+	if ($TODOTXT_VERBOSE) {
+		$oldTask = $list.GetTask($item)
+		Write-Host $oldTask
+	}
 	
-	if ($term) {
-		if ($item -le $list.Count) {
-			$oldText = $list[$item - 1].Body
-			
-			$list.ReplaceInTask($item, $term)
-			$list.ToOutput() | Set-Content $TODO_FILE
-			
-			if ($TODOTXT_VERBOSE) {
-				Write-Host "$item $oldText"
-				Write-Host "TODO: Replaced task with:"
-				Write-Host "$item $term"
-			}
+	$list.ReplaceTask($item, $task, $TODOTXT_DATE_ON_ADD)
+	$list.SaveTasks($TODO_FILE)
+	
+	if ($TODOTXT_VERBOSE) {
+		$newTask = $list.GetTask($item)
+		Write-Host "TODO: Replaced task with:"
+		Write-Host $newTask
+	}
+}
+
+function Archive-ToDo {
+
+	if(-not $DONE_FILE){
+		Write-Error "'`$DONE_FILE' not specified; cannot archive"
+		return
+	}
+
+	## Todo show an error if $DONE_FILE isn't specified
+	if ($DONE_FILE) {
+		$list = ParseToDoList
+		$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
+		
+		# TODO SaveTasks could probably be an extension method that works for any 
+		# IEnumerable<NumberedTask>, so saving would work for any of the "views"
+		$completed.ToOutput() | Add-Content $DONE_FILE 
+		$list.SaveTasks($TODO_FILE)
+		
+		if ($TODOTXT_VERBOSE) {
+			$completed | ForEach-Object { Write-Host $_ }
+			Write-Host "TODO: $TODO_FILE archived."
 		}
+	}
+}
+
+function Move-ToDo {
+	param (
+		[int] $item,
+		[string] $dest,
+		[string] $src = $TODO_FILE
+	)
+	
+	if (-not $dest) {
+		## TODO can we achieve the same thing by making the params required? can we get nice error messages?
+		return;
+	}
+
+	if (!(Test-Path $dest)) {
+		Set-Content $dest ''
+	}
+	
+	$srcList = ParseToDoList $src
+
+	if (-not $srcList.ItemExists($item)) {
+		Write-Host "No task $item."
+		return
+	}
+	
+	$destList = ParseToDoList $dest
+
+	$oldTask = $srcList.GetTask($item)
+
+	$confirmed = $TRUE
+	
+	if (!$TODOTXT_FORCE) {
+		$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Moves the task."
+		$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Does nothing."
+
+		$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+		$result = $host.ui.PromptForChoice("Move Item", "Move '$oldTask'?", $options, 1) 
+			
+		if ($result -eq 1) {
+			$confirmed = $FALSE
+		}
+	}
+
+	if (-not $confirmed) {
+		if ($TODOTXT_VERBOSE) {
+			## We need a WriteIfVerbose function
+			Write-Host "TODO: No tasks moved."
+		}
+
+		return
+	}
+		
+	## add it to the destination file
+	$destList.Create($oldTask.ToString(), $TODOTXT_DATE_ON_ADD) | Out-Null
+	$destList.SaveTasks($dest)
+			
+	## remove it from the original
+	$srcList.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
+	$srcList.SaveTasks($src) 
+			
+	if ($TODOTXT_VERBOSE) {
+		Write-Host $oldTask
+		Write-Host "TODO: $item moved from '$src' to '$dest'."
 	}
 }
 
@@ -572,56 +593,56 @@ function Remove-ToDo {
 	
 	$list = ParseToDoList
 	
-	if ($item -le $list.Count) {
-		$oldItem = ($list[$item - 1]).Body
+	if (-not $list.ItemExists($item)) {
+		Write-Host "No task $item."
+		return
+	}
+
+	$oldItem = $list.GetTask($item)
 	
-		if ($term) {
-			$success = $list.RemoveFromTask($item, $term)
-			$list.ToOutput() | Set-Content $TODO_FILE
-			
-			if ($success) {
-				$newItem = ($list[$item - 1]).Body
-				Write-Host "$item $oldItem"
-				Write-Host "TODO: Removed '$term' from task."
-				Write-Host "$item $newItem"
-			}
-			else {
-				Write-Host "$item $oldItem"
-				Write-Host "TODO: '$term' not found; no removal done."
-			}
+	if ($term) {
+		$success = $list.RemoveFromTask($item, $term)
+		$list.SaveTasks($TODO_FILE)
+		
+		if ($success) {
+			$newItem = $list.GetTask($item)
+			Write-Host "$item $oldItem"
+			Write-Host "TODO: Removed '$term' from task."
+			Write-Host "$item $newItem"
 		}
 		else {
-			$confirmed = $TRUE
-		
-			if (!$TODOTXT_FORCE) {
-				$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Deletes the task."
-				$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Retains the task."
-	
-				$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
-
-				$result = $host.ui.PromptForChoice("Delete Item", "Delete '$oldItem'?", $options, 1) 
-				
-				if ($result -eq 1) {
-					$confirmed = $FALSE
-				}
-			}
-
-			if ($confirmed) {
-				$list.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
-				$list.ToOutput() | Set-Content $TODO_FILE	
-				
-				if ($TODOTXT_VERBOSE) {
-					Write-Host ("$item $oldItem") 
-					Write-Host ("TODO: $item deleted")
-				}
-			}
-			else {
-				Write-Host "TODO: No tasks were deleted"
-			}
+			Write-Host "$item $oldItem"
+			Write-Host "TODO: '$term' not found; no removal done."
 		}
 	}
 	else {
-		Write-Host "TODO: No task $item"
+		$confirmed = $TRUE
+	
+		if (!$TODOTXT_FORCE) {
+			$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Deletes the task."
+			$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Retains the task."
+
+			$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+			$result = $host.ui.PromptForChoice("Delete Item", "Delete '$oldItem'?", $options, 1) 
+			
+			if ($result -eq 1) {
+				$confirmed = $FALSE
+			}
+		}
+
+		if ($confirmed) {
+			$list.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
+			$list.SaveTasks($TODO_FILE)
+			
+			if ($TODOTXT_VERBOSE) {
+				Write-Host ("$item $oldItem") 
+				Write-Host ("TODO: $item deleted")
+			}
+		}
+		else {
+			Write-Host "TODO: No tasks were deleted"
+		}
 	}
 }
 
