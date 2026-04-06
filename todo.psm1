@@ -6,6 +6,7 @@ if (!(Test-Path $assemblyLoadPath)) {
 }
 
 Try {
+	# Let's see if the library is already available 
 	New-Object -TypeName todotxtlib.net.TaskList 
 }
 Catch {
@@ -27,9 +28,9 @@ function LoadConfiguration() {
 	param([string] $path)
 
 	## Set up the defaults
-	$script:TODOTXT_VERBOSE = $FALSE
+	$script:TODOTXT_VERBOSE = $TRUE
 	$script:TODOTXT_FORCE = $FALSE
-	$script:TODOTXT_AUTO_ARCHIVE = $FALSEget
+	$script:TODOTXT_AUTO_ARCHIVE = $FALSE
 	$script:TODOTXT_PRESERVE_LINE_NUMBERS = $FALSE
 	$script:TODOTXT_DATE_ON_ADD = $TRUE
 	
@@ -111,6 +112,7 @@ function ToDo {
 	
 	$cmd = $args[0]
 	
+	# TODO Is there a better way to set a global variable? Or do we just collect it a the beginning of format priority?
 	$fore = $Host.UI.RawUI.ForegroundColor
 
 	if (!$cmd -or $cmd -eq "list" -or $cmd -eq "ls") {
@@ -240,6 +242,94 @@ function ParseToDoList {
 	, $todos
 }
 
+function Set-ToDoComplete {
+	param([int[]] $items)
+	
+	if (-not $items) {
+		return
+	}
+
+	$list = , (ParseToDoList)
+		
+	$items | ForEach-Object { 
+
+		if (-not $list.ItemExists($_)) {
+			Write-Host "No task $_."
+		}
+		else {
+
+			$task = $list.GetTask($_)
+
+			if ($task.Completed) {
+				Write-Host "$_ is already marked done."
+			}
+			else {
+				$list.MarkCompleted($_)
+					
+				if ($TODOTXT_VERBOSE) {
+					Write-Host ($task)
+					Write-Host "TODO: $_ marked as done."
+				}
+			}
+
+		}
+	}
+		
+	$list.ToOutput() | Set-Content $TODO_FILE
+		
+	if ($TODOTXT_AUTO_ARCHIVE) {
+		Archive-ToDo
+	}
+}
+
+
+
+
+
+
+
+function Add-ToDo {
+	param(
+		[string[]] $item
+	)
+	
+	$item = ([String]::Join(" ", $item)).Trim()
+
+	$list = , (ParseToDoList)
+
+	$list | Get-Member
+
+	$newTask = $list.Add($item, $TODOTXT_DATE_ON_ADD)
+
+	# if ($TODOTXT_DATE_ON_ADD) {
+	# 	$todo = New-Object todotxtlib.net.Task($item)
+
+	# 	if($TODOTXT_DATE_ON_ADD) {
+	# 		$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
+	# 	}
+
+	# 	$item = $todo.Raw
+	# }
+	
+	# Add-Content $TODO_FILE ($item)
+	
+	# TODO We do this in a couple of places, might need to make this its own function
+	$list.ToOutput() | Set-Content $TODO_FILE
+
+	if ($TODOTXT_VERBOSE) {
+		Write-Host $newTask
+		Write-Host "${$newTask.Number} added."
+	}
+}
+
+
+
+
+
+
+
+
+
 function Move-ToDo {
 	param (
 		[int] $item,
@@ -300,45 +390,7 @@ function Move-ToDo {
 	}
 }
 
-function Set-ToDoComplete {
-	param([int[]] $items)
-	
-	if (-not $items) {
-		return
-	}
 
-	$list = , (ParseToDoList)
-		
-	$items | ForEach-Object { 
-
-		if (-not $list.ItemExists($_)) {
-			Write-Host "No task $_."
-		}
-		else {
-
-			$task = $list.GetTask($_)
-
-			if ($task.Completed) {
-				Write-Host "$_ is already marked done."
-			}
-			else {
-				$list.MarkCompleted($_)
-					
-				if ($TODOTXT_VERBOSE) {
-					Write-Host ($task)
-					Write-Host "TODO: $_ marked as done."
-				}
-			}
-
-		}
-	}
-		
-	$list.ToOutput() | Set-Content $TODO_FILE
-		
-	if ($TODOTXT_AUTO_ARCHIVE) {
-		Archive-ToDo
-	}
-}
 
 function Archive-ToDo {
 
@@ -427,31 +479,7 @@ function Get-ToDo {
 	$result
 }
 
-function Add-ToDo {
-	param(
-		[string[]] $item
-	)
-	
-	$item = ([String]::Join(" ", $item)).Trim()
 
-	if ($TODOTXT_DATE_ON_ADD) {
-		$todo = New-Object todotxtlib.net.Task($item)
-
-		if($TODOTXT_DATE_ON_ADD) {
-			$item = ((Get-Date -format "yyyy-MM-dd") + " " + $item)
-		}
-
-		$item = $todo.Raw
-	}
-	
-	Add-Content $TODO_FILE ($item)
-	
-	if ($TODOTXT_VERBOSE) {
-		$taskNum = (Get-Content $TODO_FILE | Measure-Object).Count
-		Write-Host "$taskNum $item"
-		Write-Host "$taskNum added."
-	}
-}
 
 function Get-Context {
 	$matches = (select-string $TODO_FILE -pattern '\s(@\w+)' -AllMatches) | % { $_.Matches }
