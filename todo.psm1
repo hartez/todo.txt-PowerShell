@@ -111,6 +111,10 @@ function ToDo {
 	
 	LoadConfiguration $configLocation
 	
+	if($TODOTXT_VERBOSE){
+		$VerbosePreference = 'Continue'
+	}
+
 	## TODO process command line options for overrides
 
 	## TODO Add a command to mark pending
@@ -255,7 +259,10 @@ function Get-ToDo {
 		[string] $path = $TODO_FILE
 	)
 	
-	## TODO Error/warning message for no todo location set
+	if(-not $path){
+		Write-Error "Source path must be specified (have you set `$TODO_FILE?)"
+		return
+	}
 
 	$list = ParseToDoList $path $includeCompletedTasks
 	
@@ -266,9 +273,8 @@ function Get-ToDo {
 	if (!$search) {
 		return $list
 	}
-	
-	## TODO - check for '-' at the beginning of the search term and handle notMatch
-	($list.Search($search))
+		
+	$list.Search($search)
 }
 
 function Add-ToDo {
@@ -284,10 +290,8 @@ function Add-ToDo {
 	
 	$list.SaveTasks($TODO_FILE)
 
-	if ($TODOTXT_VERBOSE) {
-		Write-Host $newTask
-		Write-Host "$($newTask.Number) added."
-	}
+	Write-Verbose $newTask
+	Write-Verbose "$($newTask.Number) added."
 }
 
 
@@ -303,22 +307,20 @@ function Set-ToDoComplete {
 	$items | ForEach-Object { 
 
 		if (-not $list.ItemExists($_)) {
-			Write-Host "No task $_."
+			Write-Error "No task $_."
 		}
 		else {
 
 			$task = $list.GetTask($_)
 
 			if ($task.Completed) {
-				Write-Host "$_ is already marked done."
+				Write-Verbose "$_ is already marked done."
 			}
 			else {
 				$list.MarkCompleted($_)
-					
-				if ($TODOTXT_VERBOSE) {
-					Write-Host ($task)
-					Write-Host "TODO: $_ marked as done."
-				}
+				
+				Write-Verbose ($task)
+				Write-Verbose "TODO: $_ marked as done."
 			}
 
 		}
@@ -369,13 +371,11 @@ function Set-ToDoPriority {
 			$list.SetItemPriority($item, $priority)
 			$list.SaveTasks($TODO_FILE)
 
-			## TODO This one never had an if(verbose) - should it?
+			Write-Verbose "TODO: $item set to priority ($priority)"
 		}
 	} else{
-		Write-Host "Priority must be A-Z"
+		Write-Error "Priority must be A-Z"
 	}
-	
-	## TODO show usage
 }
 
 function Deprioritize-ToDo {
@@ -390,15 +390,14 @@ function Deprioritize-ToDo {
 	$items | ForEach-Object {
 		
 		if (-not $list.ItemExists($_)) {
-			Write-Host "No task $_."
+			Write-Error "No task $_."
 		}
 		else {
 			$task = $list.GetTask($_)
 			$list.ClearItemPriority($_)
-			if ($TODOTXT_VERBOSE) {
-				Write-Host ($task)
-				Write-Host "TODO: $_ deprioritized."
-			}
+
+			Write-Verbose ($task)
+			Write-Verbose "TODO: $_ deprioritized."
 		}
 	}
 	
@@ -412,24 +411,22 @@ function Prepend-ToDo {
 	)
 
 	if (-not $term) {
-		Write-Host "Please specify the text"
+		Write-Error "Please specify the text"
 		return
 	}
 
 	$list = ParseToDoList
 
 	if (-not $list.ItemExists($_)) {
-		Write-Host "No task $_."
+		Write-Error "No task $_."
 		return
 	}
 	
 	$list.PrependToTask($item, $term)
 	$list.SaveTasks($TODO_FILE)
 	
-	if ($TODOTXT_VERBOSE) {
-		$task = $list.GetTask($item)
-		Write-Host $task
-	}
+	$task = $list.GetTask($item)
+	Write-Verbose $task
 }
 
 function Append-ToDo {
@@ -439,24 +436,22 @@ function Append-ToDo {
 	)
 
 	if (-not $term) {
-		Write-Host "Please specify the text"
+		Write-Error "Please specify the text"
 		return
 	}
 
 	$list = ParseToDoList
 
 	if (-not $list.ItemExists($_)) {
-		Write-Host "No task $_."
+		Write-Error "No task $_."
 		return
 	}
 			
 	$list.AppendToTask($item, $term)
 	$list.SaveTasks($TODO_FILE)
 	
-	if ($TODOTXT_VERBOSE) {
-		$task = $list.GetTask($item)
-		Write-Host $task
-	}
+	$task = $list.GetTask($item)
+	Write-Verbose $task
 }
 
 function Replace-ToDo {
@@ -466,30 +461,26 @@ function Replace-ToDo {
 	)
 		
 	if (-not $task) {
-		Write-Host "Please specify the replacement task"
+		Write-Error "Please specify the replacement task"
 		return
 	}
 
 	$list = ParseToDoList
 
 	if (-not $list.ItemExists($_)) {
-		Write-Host "No task $_."
+		Write-Error "No task $_."
 		return
 	}
-
-	if ($TODOTXT_VERBOSE) {
-		$oldTask = $list.GetTask($item)
-		Write-Host $oldTask
-	}
 	
+	$oldTask = $list.GetTask($item)
+		
 	$list.ReplaceTask($item, $task, $TODOTXT_DATE_ON_ADD)
 	$list.SaveTasks($TODO_FILE)
-	
-	if ($TODOTXT_VERBOSE) {
-		$newTask = $list.GetTask($item)
-		Write-Host "TODO: Replaced task with:"
-		Write-Host $newTask
-	}
+		
+	$newTask = $list.GetTask($item)
+	Write-Verbose $oldTask
+	Write-Verbose "TODO: Replaced task with:"
+	Write-Verbose $newTask
 }
 
 function Archive-ToDo {
@@ -499,21 +490,16 @@ function Archive-ToDo {
 		return
 	}
 
-	## Todo show an error if $DONE_FILE isn't specified
-	if ($DONE_FILE) {
-		$list = ParseToDoList
-		$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
-		
-		# TODO SaveTasks could probably be an extension method that works for any 
-		# IEnumerable<NumberedTask>, so saving would work for any of the "views"
-		$completed.ToOutput() | Add-Content $DONE_FILE 
-		$list.SaveTasks($TODO_FILE)
-		
-		if ($TODOTXT_VERBOSE) {
-			$completed | ForEach-Object { Write-Host $_ }
-			Write-Host "TODO: $TODO_FILE archived."
-		}
-	}
+	$list = ParseToDoList
+	$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
+	
+	# TODO SaveTasks could probably be an extension method that works for any 
+	# IEnumerable<NumberedTask>, so saving would work for any of the "views"
+	$completed.ToOutput() | Add-Content $DONE_FILE 
+	$list.SaveTasks($TODO_FILE)
+	
+	$completed | ForEach-Object { Write-Host $_ }
+	Write-Verbose "TODO: $TODO_FILE archived."
 }
 
 function Move-ToDo {
@@ -525,6 +511,7 @@ function Move-ToDo {
 	
 	if (-not $dest) {
 		## TODO can we achieve the same thing by making the params required? can we get nice error messages?
+		Write-Error "Please specify a destination file"
 		return;
 	}
 
@@ -535,7 +522,7 @@ function Move-ToDo {
 	$srcList = ParseToDoList $src
 
 	if (-not $srcList.ItemExists($item)) {
-		Write-Host "No task $item."
+		Write-Error "No task $item."
 		return
 	}
 	
@@ -559,11 +546,7 @@ function Move-ToDo {
 	}
 
 	if (-not $confirmed) {
-		if ($TODOTXT_VERBOSE) {
-			## We need a WriteIfVerbose function
-			Write-Host "TODO: No tasks moved."
-		}
-
+		Write-Verbose "TODO: No tasks moved."
 		return
 	}
 		
@@ -574,11 +557,9 @@ function Move-ToDo {
 	## remove it from the original
 	$srcList.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
 	$srcList.SaveTasks($src) 
-			
-	if ($TODOTXT_VERBOSE) {
-		Write-Host $oldTask
-		Write-Host "TODO: $item moved from '$src' to '$dest'."
-	}
+
+	Write-Verbose $oldTask
+	Write-Verbose "TODO: $item moved from '$src' to '$dest'."
 }
 
 function Remove-ToDo {
@@ -630,11 +611,9 @@ function Remove-ToDo {
 		if ($confirmed) {
 			$list.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
 			$list.SaveTasks($TODO_FILE)
-			
-			if ($TODOTXT_VERBOSE) {
-				Write-Host ("$item $oldItem") 
-				Write-Host ("TODO: $item deleted")
-			}
+
+			Write-Verbose ("$item $oldItem") 
+			Write-Verbose ("TODO: $item deleted")
 		}
 		else {
 			Write-Host "TODO: No tasks were deleted"
