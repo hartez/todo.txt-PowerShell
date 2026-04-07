@@ -501,7 +501,7 @@ function Sync-TaskArchive {
 	$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 	
 	if($completed){
-		$completed | Select-Object -Property Task | Add-Content $DONE_FILE
+		$completed | Select-Object -ExpandProperty Task | Add-Content $DONE_FILE
 	}
 
 	$list.Save($TODO_FILE)
