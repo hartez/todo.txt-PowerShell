@@ -500,7 +500,10 @@ function Sync-TaskArchive {
 	$list = Read-TaskList
 	$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 	
-	$completed.ToOutput() | Add-Content $DONE_FILE 
+	if($completed){
+		$completed | Select-Object -Property Task | Add-Content $DONE_FILE
+	}
+
 	$list.Save($TODO_FILE)
 	
 	$completed | ForEach-Object { Write-Host $_ }
