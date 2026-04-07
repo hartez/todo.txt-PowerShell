@@ -114,10 +114,6 @@ function Invoke-TaskCommand {
 		$VerbosePreference = 'Continue'
 	}
 
-	## TODO process command line options for overrides
-
-	## TODO Add a command to mark pending
-	
 	$cmd = $args[0]
 
 	if (!$cmd -or $cmd -eq "list" -or $cmd -eq "ls") {
@@ -168,6 +164,9 @@ function Invoke-TaskCommand {
 	}
 	elseif ($cmd -eq "do") {
 		Set-TaskComplete $args[1..$args.Length]
+	}
+	elseif ($cmd -eq "markpending") {
+		Set-TaskPending $args[1..$args.Length]
 	}
 	elseif ($cmd -eq "archive") {
 		Sync-TaskArchive
@@ -301,6 +300,22 @@ function Set-TaskComplete {
 		return
 	}
 
+	Set-TaskCompletion $true $items
+}
+
+function Set-TaskPending {
+	param([int[]] $items)
+	
+	if (-not $items) {
+		return
+	}
+
+	Set-TaskCompletion $false $items
+}
+
+function Set-TaskCompletion {
+	param([bool]$isCompleted, [int[]]$items)
+
 	$list = Read-TaskList		
 
 	$items | ForEach-Object { 
@@ -312,22 +327,37 @@ function Set-TaskComplete {
 
 			$task = $list.GetTask($_)
 
-			if ($task.Completed) {
-				Write-Verbose "$_ is already marked done."
-			}
-			else {
-				$list.MarkCompleted($_)
-				
-				Write-Verbose ($task)
-				Write-Verbose "TODO: $_ marked as done."
-			}
+			iF($isCompleted){
 
+				if ($task.Completed) {
+					Write-Verbose "$_ is already marked done."
+				}
+				else {
+					$list.MarkCompleted($_)
+					
+					Write-Verbose ($task.Body)
+					Write-Verbose "TODO: $_ marked as done."
+				}
+
+			} else {
+
+				if (-not $task.Completed) {
+					Write-Verbose "$_ is already marked pending."
+				}
+				else {
+					$list.MarkPending($_)
+					
+					Write-Verbose ($task.Body)
+					Write-Verbose "TODO: $_ marked as pending."
+				}
+
+			}
 		}
 	}
 		
 	$list.SaveTasks($TODO_FILE)
 		
-	if ($TODOTXT_AUTO_ARCHIVE) {
+	if ($isCompleted -and $TODOTXT_AUTO_ARCHIVE) {
 		Sync-TaskArchive
 	}
 }
@@ -395,7 +425,7 @@ function Remove-TaskPriority {
 			$task = $list.GetTask($_)
 			$list.ClearItemPriority($_)
 
-			Write-Verbose ($task)
+			Write-Verbose ($task.Body)
 			Write-Verbose "TODO: $_ deprioritized."
 		}
 	}
