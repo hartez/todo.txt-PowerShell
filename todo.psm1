@@ -52,10 +52,10 @@ function LoadConfiguration() {
 
 <# 
 .Synopsis
-	TODO.TXT Command Line Interface for PowerShell 2.0
+	TODO.TXT Command Line Interface for PowerShell 3.0
 
 .Description
-	The ToDo function is an entry point for running functions to manipulate a todo.txt file 
+	The Invoke-TaskCommand function is an entry point for running functions to manipulate a todo.txt file 
 	using the same command syntax as todo.sh
 
 .Example
@@ -102,7 +102,7 @@ function LoadConfiguration() {
 	
 	Moves item 34 to otherfile.txt
 #>
-function ToDo {
+function Invoke-TaskCommand {
 	param()
 	
 	if (!$configLocation) {
@@ -127,30 +127,30 @@ function ToDo {
 	if (!$cmd -or $cmd -eq "list" -or $cmd -eq "ls") {
 		$todoArgs = @{path = $TODO_FILE; search = $args[1..$args.Length] }
 		
-		Format-Priority((Get-ToDo @todoArgs))
+		Format-Priority((Get-Task @todoArgs))
 	}
 	elseif ($cmd -eq "listall" -or $cmd -eq "lsa") {
 		$todoArgs = @{path = $TODO_FILE; search = $args[1..$args.Length]; includeCompletedTasks = $TRUE }
 		
-		Format-Priority((Get-ToDo @todoArgs)) 
+		Format-Priority((Get-Task @todoArgs)) 
 	}
 	elseif ($cmd -eq "listfile" -or $cmd -eq "lf") {
 		$todoArgs = @{path = $args[1]; search = $args[2..$args.Length] }
 	
-		Format-Priority((Get-ToDo @todoArgs))
+		Format-Priority((Get-Task @todoArgs))
 	}
 	elseif ($cmd -eq "add" -or $cmd -eq "a") {
-		Add-Todo $args[1..$args.Length]
+		Add-Task $args[1..$args.Length]
 	}
 	elseif ($cmd -eq "addm") {
 		$split = $args[$args.Length - 1].Split([environment]::newline, [StringSplitOptions]'RemoveEmptyEntries')
 
 		($split) | % {
-			Add-ToDo $_
+			Add-Task $_
 		}
 	}
 	elseif ($cmd -eq "rm" -or $cmd -eq "del") {
-		Remove-ToDo $args[1] $args[2]
+		Remove-Task $args[1] $args[2]
 	}
 	elseif ($cmd -eq "listproj" -or $cmd -eq "lsprj" ) {
 		Get-Project
@@ -162,38 +162,40 @@ function ToDo {
 		Format-Priority((Get-Priority $args[1]))
 	}	
 	elseif ($cmd -eq "replace") {
-		Replace-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
+		Set-Task $args[1] ([String]::Join(" ", $args[2..$args.Length]))
 	}
 	elseif ($cmd -eq "prepend" -or $cmd -eq "prep") {
-		Prepend-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
+		Edit-Task $args[1] $false ([String]::Join(" ", $args[2..$args.Length]))
 	}
 	elseif ($cmd -eq "append" -or $cmd -eq "app") {
-		Append-ToDo $args[1] ([String]::Join(" ", $args[2..$args.Length]))
+		Edit-Task $args[1] $true ([String]::Join(" ", $args[2..$args.Length]))
 	}
 	elseif ($cmd -eq "do") {
-		Set-ToDoComplete $args[1..$args.Length]
+		Set-TaskComplete $args[1..$args.Length]
 	}
 	elseif ($cmd -eq "archive") {
-		Archive-ToDo
+		Sync-TaskArchive
 	}
 	elseif ($cmd -eq "pri" -or $cmd -eq "p") {
-		Set-ToDoPriority $args[1] $args[2]
+		Set-TaskPriority $args[1] $args[2]
 	}
 	elseif ($cmd -eq "depri" -or $cmd -eq "dp") {
-		Deprioritize-ToDo $args[1..$args.Length]
+		Remove-TaskPriority $args[1..$args.Length]
 	}
 	elseif ($cmd -eq "move" -or $cmd -eq "mv") {
 		if ($args[3]) {
-			Move-ToDo $args[1] $args[2] $args[3]
+			Move-Task $args[1] $args[2] $args[3]
 		}
 		else {
-			Move-ToDo $args[1] $args[2] 
+			Move-Task $args[1] $args[2] 
 		}
 	}
 	elseif ($cmd -eq "help") {
 		Get-Help Todo
 	}
 }
+
+Set-Alias -Name todo -Value Invoke-TaskCommand
 
 function Format-Priority {
 	param(
@@ -226,7 +228,7 @@ function Format-Priority {
 	$Host.UI.RawUI.ForegroundColor = $fore
 }
 
-function ParseToDoList {
+function Read-TaskList {
 	param(
 		[string] $path = $TODO_FILE,
 		[boolean] $includeCompletedTasks = $FALSE
@@ -252,7 +254,7 @@ function ParseToDoList {
 	, $list
 }
 
-function Get-ToDo {
+function Get-Task {
 	param(
 		[string[]] $search,
 		[boolean] $includeCompletedTasks = $FALSE,
@@ -264,7 +266,7 @@ function Get-ToDo {
 		return
 	}
 
-	$list = ParseToDoList $path $includeCompletedTasks
+	$list = Read-TaskList $path $includeCompletedTasks
 	
 	if ($search) {
 		$search = [String]::Join(" ", $search).Trim() 
@@ -277,14 +279,14 @@ function Get-ToDo {
 	$list.Search($search)
 }
 
-function Add-ToDo {
+function Add-Task {
 	param(
 		[string[]] $item
 	)
 	
 	$item = ([String]::Join(" ", $item)).Trim()
 
-	$list = ParseToDoList
+	$list = Read-TaskList
 
 	$newTask = $list.Create($item, $TODOTXT_DATE_ON_ADD)
 	
@@ -294,15 +296,14 @@ function Add-ToDo {
 	Write-Verbose "$($newTask.Number) added."
 }
 
-
-function Set-ToDoComplete {
+function Set-TaskComplete {
 	param([int[]] $items)
 	
 	if (-not $items) {
 		return
 	}
 
-	$list = ParseToDoList		
+	$list = Read-TaskList		
 
 	$items | ForEach-Object { 
 
@@ -329,7 +330,7 @@ function Set-ToDoComplete {
 	$list.SaveTasks($TODO_FILE)
 		
 	if ($TODOTXT_AUTO_ARCHIVE) {
-		Archive-ToDo
+		Sync-TaskArchive
 	}
 }
 
@@ -338,7 +339,7 @@ function Get-Priority {
 		[Nullable[char]] $priority 
 	)
 
-	$list = ParseToDoList
+	$list = Read-TaskList
 	$list.GetPriority($priority) 
 }
 
@@ -357,12 +358,12 @@ function Get-Project {
 		|  Sort-Object -Property Project -Unique
 }
 
-function Set-ToDoPriority {
+function Set-TaskPriority {
 	param([int] $item,
 		[string] $priority)
 
 	if ($priority -match "^[A-Z]{1}$") {
-		$list = ParseToDoList
+		$list = Read-TaskList
 		
 		if (-not $list.ItemExists($_)) {
 			Write-Host "No task $item."
@@ -378,14 +379,14 @@ function Set-ToDoPriority {
 	}
 }
 
-function Deprioritize-ToDo {
+function Remove-TaskPriority {
 	param([int[]] $items)
 	
 	if($items.Length -eq 0){
 		return
 	}
 
-	$list = ParseToDoList
+	$list = Read-TaskList
 	
 	$items | ForEach-Object {
 		
@@ -404,9 +405,10 @@ function Deprioritize-ToDo {
 	$list.SaveTasks($TODO_FILE)
 }
 
-function Prepend-ToDo {
+function Edit-Task {
 	param(
-		[int] $item,
+		[int] $item,   
+		[bool] $append,
 		[string] $term
 	)
 
@@ -415,46 +417,27 @@ function Prepend-ToDo {
 		return
 	}
 
-	$list = ParseToDoList
+	$list = Read-TaskList
 
 	if (-not $list.ItemExists($_)) {
 		Write-Error "No task $_."
 		return
 	}
 	
-	$list.PrependToTask($item, $term)
+	if ($append) {
+		$list.AppendToTask($item, $term)
+	}
+	else {
+		$list.PrependToTask($item, $term)
+	}
+	
 	$list.SaveTasks($TODO_FILE)
 	
 	$task = $list.GetTask($item)
 	Write-Verbose $task
 }
 
-function Append-ToDo {
-	param(
-		[int] $item,
-		[string] $term
-	)
-
-	if (-not $term) {
-		Write-Error "Please specify the text"
-		return
-	}
-
-	$list = ParseToDoList
-
-	if (-not $list.ItemExists($_)) {
-		Write-Error "No task $_."
-		return
-	}
-			
-	$list.AppendToTask($item, $term)
-	$list.SaveTasks($TODO_FILE)
-	
-	$task = $list.GetTask($item)
-	Write-Verbose $task
-}
-
-function Replace-ToDo {
+function Set-Task {
 	param(
 		[int] $item,
 		[string] $task
@@ -465,7 +448,7 @@ function Replace-ToDo {
 		return
 	}
 
-	$list = ParseToDoList
+	$list = Read-TaskList
 
 	if (-not $list.ItemExists($_)) {
 		Write-Error "No task $_."
@@ -483,14 +466,14 @@ function Replace-ToDo {
 	Write-Verbose $newTask
 }
 
-function Archive-ToDo {
+function Sync-TaskArchive {
 
 	if(-not $DONE_FILE){
 		Write-Error "'`$DONE_FILE' not specified; cannot archive"
 		return
 	}
 
-	$list = ParseToDoList
+	$list = Read-TaskList
 	$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 	
 	# TODO SaveTasks could probably be an extension method that works for any 
@@ -502,7 +485,7 @@ function Archive-ToDo {
 	Write-Verbose "TODO: $TODO_FILE archived."
 }
 
-function Move-ToDo {
+function Move-Task {
 	param (
 		[int] $item,
 		[string] $dest,
@@ -519,14 +502,14 @@ function Move-ToDo {
 		Set-Content $dest ''
 	}
 	
-	$srcList = ParseToDoList $src
+	$srcList = Read-TaskList $src
 
 	if (-not $srcList.ItemExists($item)) {
 		Write-Error "No task $item."
 		return
 	}
 	
-	$destList = ParseToDoList $dest
+	$destList = Read-TaskList $dest
 
 	$oldTask = $srcList.GetTask($item)
 
@@ -562,13 +545,13 @@ function Move-ToDo {
 	Write-Verbose "TODO: $item moved from '$src' to '$dest'."
 }
 
-function Remove-ToDo {
+function Remove-Task {
 	param(
 		[int] $item,
 		[string] $term
 	)
 	
-	$list = ParseToDoList
+	$list = Read-TaskList
 	
 	if (-not $list.ItemExists($item)) {
 		Write-Host "No task $item."
@@ -621,20 +604,4 @@ function Remove-ToDo {
 	}
 }
 
-export-modulemember -function Get-ToDo
-export-modulemember -function Add-ToDo
-export-modulemember -function Remove-ToDo
-export-modulemember -function Get-Context
-export-modulemember -function Get-Project
-export-modulemember -function Get-Priority
-export-modulemember -function Append-ToDo
-export-modulemember -function Prepend-ToDo
-export-modulemember -function Replace-ToDo
-export-modulemember -function Set-ToDoDone
-export-modulemember -function Set-ToDoPriority
-export-modulemember -function Archive-ToDo
-export-modulemember -function Set-ToDoComplete
-export-modulemember -function Deprioritize-ToDo
-export-modulemember -function Move-ToDo
-export-modulemember -function ToDo
-export-modulemember -function ParseToDoList
+export-modulemember -function Invoke-TaskCommand
