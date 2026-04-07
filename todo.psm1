@@ -287,7 +287,7 @@ function Add-Task {
 
 	$newTask = $list.Create($item, $TODOTXT_DATE_ON_ADD)
 	
-	$list.SaveTasks($TODO_FILE)
+	$list.Save($TODO_FILE)
 
 	Write-Verbose $newTask
 	Write-Verbose "$($newTask.Number) added."
@@ -355,7 +355,7 @@ function Set-TaskCompletion {
 		}
 	}
 		
-	$list.SaveTasks($TODO_FILE)
+	$list.Save($TODO_FILE)
 		
 	if ($isCompleted -and $TODOTXT_AUTO_ARCHIVE) {
 		Sync-TaskArchive
@@ -398,7 +398,7 @@ function Set-TaskPriority {
 		} 
 		else {
 			$list.SetItemPriority($item, $priority)
-			$list.SaveTasks($TODO_FILE)
+			$list.Save($TODO_FILE)
 
 			Write-Verbose "TODO: $item set to priority ($priority)"
 		}
@@ -430,7 +430,7 @@ function Remove-TaskPriority {
 		}
 	}
 	
-	$list.SaveTasks($TODO_FILE)
+	$list.Save($TODO_FILE)
 }
 
 function Edit-Task {
@@ -459,7 +459,7 @@ function Edit-Task {
 		$list.PrependToTask($item, $term)
 	}
 	
-	$list.SaveTasks($TODO_FILE)
+	$list.Save($TODO_FILE)
 	
 	$task = $list.GetTask($item)
 	Write-Verbose $task
@@ -486,7 +486,7 @@ function Set-Task {
 	$oldTask = $list.GetTask($item)
 		
 	$list.ReplaceTask($item, $task, $TODOTXT_DATE_ON_ADD)
-	$list.SaveTasks($TODO_FILE)
+	$list.Save($TODO_FILE)
 		
 	$newTask = $list.GetTask($item)
 	Write-Verbose $oldTask
@@ -504,10 +504,8 @@ function Sync-TaskArchive {
 	$list = Read-TaskList
 	$completed = $list.RemoveCompletedTasks($TODOTXT_PRESERVE_LINE_NUMBERS)
 	
-	# TODO SaveTasks could probably be an extension method that works for any 
-	# IEnumerable<NumberedTask>, so saving would work for any of the "views"
 	$completed.ToOutput() | Add-Content $DONE_FILE 
-	$list.SaveTasks($TODO_FILE)
+	$list.Save($TODO_FILE)
 	
 	$completed | ForEach-Object { Write-Host $_ }
 	Write-Verbose "TODO: $TODO_FILE archived."
@@ -590,7 +588,7 @@ function Remove-Task {
 	
 	if ($term) {
 		$success = $list.RemoveFromTask($item, $term)
-		$list.SaveTasks($TODO_FILE)
+		$list.Save($TODO_FILE)
 		
 		if ($success) {
 			$newItem = $list.GetTask($item)
@@ -621,7 +619,7 @@ function Remove-Task {
 
 		if ($confirmed) {
 			$list.RemoveTask($item, $TODOTXT_PRESERVE_LINE_NUMBERS)
-			$list.SaveTasks($TODO_FILE)
+			$list.Save($TODO_FILE)
 
 			Write-Verbose ("$item $oldItem") 
 			Write-Verbose ("TODO: $item deleted")
