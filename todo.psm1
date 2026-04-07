@@ -1,5 +1,4 @@
 # TODO Take these out when you're done debugging
-
 $TODO_FILE = "C:\Users\hartez\Dropbox\testtodo\todo.txt"
 Update-FormatData -AppendPath .\todo.ps1xml
 
@@ -56,49 +55,49 @@ function LoadConfiguration() {
 
 .Description
 	The Invoke-TaskCommand function is an entry point for running functions to manipulate a todo.txt file 
-	using the same command syntax as todo.sh
+	using the same command syntax as todo.sh. This module exports an alias of 'todo' for Invoke-TaskCommand
+	to retain the same command structure as todo.sh. 
 
 .Example
-	ToDo list 
+	todo list 
 	
 	List all of the todo items in your todo file. 
 
 .Example
-	ToDo listall 
+	todo listall 
 	
 	List all of the items in the todo and done files.
 
 .Example
-	ToDo add "THING I NEED TO DO +project @context"
+	todo add "THING I NEED TO DO +project @context"
 	
 	Adds "THING I NEED TO DO" to your todo.txt file on its own line, 
 	assigning it to a project and context. 
 
 .Example 
-	ToDo append 34 "TEXT TO APPEND"
+	todo append 34 "TEXT TO APPEND"
 
 	Adds "TEXT TO APPEND" to the end of the task on line 34.
 
 .Example 
-	ToDo archive
+	todo archive 
 	
 	Moves all done tasks from todo.txt to done.txt.
 	
 .Example 
-
-	ToDo del 34 
+	todo del 34 
 
 	Deletes the task on line 34 in todo.txt.
 
 .Example 
 
-	ToDo del 34 "foo"
+	todo del 34 "foo"
 	
 	Deletes the text "foo" from line 34 in todo.txt
 	
 .Example 
 
-	ToDo move 34 .\otherfile.txt
+	todo move 34 .\otherfile.txt
 	
 	Moves item 34 to otherfile.txt
 #>
@@ -120,9 +119,6 @@ function Invoke-TaskCommand {
 	## TODO Add a command to mark pending
 	
 	$cmd = $args[0]
-	
-	# TODO Is there a better way to set a global variable? Or do we just collect it a the beginning of format priority?
-	$fore = $Host.UI.RawUI.ForegroundColor
 
 	if (!$cmd -or $cmd -eq "list" -or $cmd -eq "ls") {
 		$todoArgs = @{path = $TODO_FILE; search = $args[1..$args.Length] }
@@ -145,7 +141,7 @@ function Invoke-TaskCommand {
 	elseif ($cmd -eq "addm") {
 		$split = $args[$args.Length - 1].Split([environment]::newline, [StringSplitOptions]'RemoveEmptyEntries')
 
-		($split) | % {
+		($split) | ForEach-Object {
 			Add-Task $_
 		}
 	}
@@ -195,12 +191,14 @@ function Invoke-TaskCommand {
 	}
 }
 
-Set-Alias -Name todo -Value Invoke-TaskCommand
+Set-Alias -Name todo -Value Invoke-TaskCommand -Scope Global
 
 function Format-Priority {
 	param(
 		[object[]] $numberedTasks
 	)
+
+	$fore = $Host.UI.RawUI.ForegroundColor
 
 	$numberedTasks | ForEach-Object {
 
