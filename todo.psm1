@@ -1,7 +1,3 @@
-# TODO Take these out when you're done debugging
-$TODO_FILE = "C:\Users\hartez\Dropbox\testtodo\todo.txt"
-Update-FormatData -AppendPath .\todo.ps1xml
-
 $assemblyPath = ($PSScriptRoot + '\staging\todotxtlib.net.dll')
 $assemblyLoadPath = ($PSScriptRoot + '\lib')
 
